@@ -1,5 +1,6 @@
 from random import randint
 from tkinter import *
+import tkinter as tk
 
 class Card:
   def __init__(self,name,damage = 0,guard = 0,debuff = None, buff = None):
@@ -27,6 +28,21 @@ class Creature():
     def __str__(self):
         return "{}, Health = {} , Buff = {}, Debuff = {} , Moveset = {}".format(self.name,self.health,self.buff,self.debuff,self.prtmoves())
 
+    def carduse(card,user,creature):
+      damage = 0
+      strengthcount = 3
+      creature.debuff = card.debuff
+      user.status = card.buff
+      if user.buff == "strength":
+          damage = card.damage + 2
+      user.guard = user.guard + card.guard
+      realdamage = damage - creature.guard
+      if realdamage > 0:
+          givendamage = realdamage
+      else:
+          givendamage = 0
+      creature.health = creature.health - givendamage
+
 
 class Slime(Creature):
     def __init__(self):
@@ -47,30 +63,9 @@ class Player(Creature):
         self.movelist = [Card("Fireball", 2,0,"burn"),Card("Guard",0,2)]
         
 
-def carduse(card,user,creature):
-    damage = 0
-    strengthcount = 3
-    creature.debuff = card.debuff
-    user.status = card.buff
-    if user.buff == "strength":
-        damage = card.damage + 2
-    user.guard = user.guard + card.guard
-    realdamage = damage - creature.guard
-    if realdamage > 0:
-        givendamage = realdamage
-    else:
-        givendamage = 0
-    creature.health = creature.health - givendamage
+
     
-#Turns
-def combat(creature):
-#3 card uses
-    while creature.health != 0:
-        input=carduse(F1,P1,creature)
-        input=carduse(G1,P1,creature)
-        input=carduse(F1,P1,creature)
-        creatureattack(creature)
-        turnchange()
+
 
 def creatureattack(creature):
     randmove = randint(0,len(creature.moveset()))
@@ -78,15 +73,9 @@ def creatureattack(creature):
     carduse(creature.moveset(randmove),creature,P1)
 
 def weakencounter():
-    randomcreature = randint(0,3)
-    if randomcreature == slime:
-        monster = Slime()
-    if randomcreature == orc:
-        monster = Orc()
-    if randomcreature == wolf:
-        monster = Wolf()
-    if randomcreature == zombie:
-        monster = Zombie()
+  weakmonsters = [Slime(),Orc(),Wolf(),Zombie()]
+  randomcreature = weakmonsters[randint(0,3)]
+  return randomcreature
     
 def miniboss():
     randomminiboss = randint(0,2)
@@ -113,6 +102,10 @@ def mapmaker(newmap):
 
 
 class Game(Frame):
+
+  font = "Courier"
+  buttonsize = 20 
+
   def __init__(self, master=None):
     Frame.__init__(self, master)                 
     self.master = master
@@ -132,17 +125,6 @@ class Game(Frame):
     for widget in Game.winfo_children(self):
       widget.destroy()
 
-  def selectmap(self):
-    self.clearscreen()
-    map1Button = Button(self, text="Map 1")
-    map1Button.place(x = 325 , y = 100)
-    map2Button = Button(self, text="Map 2")
-    map2Button.place(x = 325 , y = 250)
-    map3Button = Button(self, text="Map 3")
-    map3Button.place(x = 325 , y = 400)
-    backButton = Button(self, text = "Back", command = self.startscreen)
-    backButton.place(x = 325, y = 500)
-
   def startscreen(self):
     # clear screen
     self.clearscreen()
@@ -157,9 +139,69 @@ class Game(Frame):
 
     # placing the button on my window
     startButton.place(x=325, y=400)
-    startButton.config(font=("Courier", 18))
+    startButton.config(font=(Game.font,Game.buttonsize))
 
+  def selectmap(self):
+    column1 = 200
+    column2 = 400
+    row1 = 100
+    row2 = 250
+    row3 = 400
+    row4 = 500
+    self.clearscreen()
+    selectedmap = tk.IntVar()
+    map1button = Radiobutton(self,variable = selectedmap, value = 0, text = "Map 1")
+    map1button.place(x = column1, y = row1)
+    map1button.config(font=(Game.font,Game.buttonsize))
+    map2button = Radiobutton(self,variable = selectedmap, value = 1, text = "Map 2")
+    map2button.place(x = column1, y = row2)
+    map2button.config(font=(Game.font,Game.buttonsize))
+    map3button = Radiobutton(self,variable = selectedmap, value = 2, text = "Map 3")
+    map3button.place(x = column1, y = row3)
+    map3button.config(font=(Game.font,Game.buttonsize))
+    showmap1Button = Button(self, text="Show Map 1")
+    showmap1Button.place(x = column2 , y = row1)
+    showmap1Button.config(font=(Game.font,Game.buttonsize))
+    showmap2Button = Button(self, text="Show Map 2")
+    showmap2Button.place(x = column2 , y = row2)
+    showmap2Button.config(font=(Game.font,Game.buttonsize))
+    showmap3Button = Button(self, text="Show Map 3")
+    showmap3Button.place(x = column2 , y = row3)
+    showmap3Button.config(font=(Game.font,Game.buttonsize))
+    selectmapButton = Button(self, text = "Start Adventure")
+    selectmapButton.place(x = 150, y = row4)
+    selectmapButton.config(font=(Game.font,Game.buttonsize))
+    backButton = Button(self, text = "Back", command = self.startscreen)
+    backButton.place(x = 475, y = row4)
+    backButton.config(font=(Game.font,Game.buttonsize))
 
+  def mapscreen(self):
+    self.clearscreen()
+    backButton = Button(self, text = "Back", command = self.selectmap)
+    backButton.place(x = 325, y = 500)
+    
+  def processmap(self):
+    encounter = selectedmap[self.mapposition]
+    if encounter == "weak":
+      Game.weakencounter
+
+  def encounter(self):
+    monster = Game.weakencounter()
+
+    # Monster attacks and player replenishes energy
+    if player.energy < 1:
+      pass
+    if monster.health < 1:
+      Game.loot()
+
+  def loot(self):
+    # Give loot
+    pass
+
+  def weakencounter(self):
+    weakmonsters = [Slime(),Orc(),Wolf(),Zombie()]
+    randomcreature = weakmonsters[randint(0,3)]
+    return randomcreature
   # play the game
   def play(self):
     # make the start screen
