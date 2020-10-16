@@ -54,23 +54,21 @@ class Slime(Creature):
         self.movelist = [Card("Fireball", 2,0,"burn"),Card("Guard",0,2)]
         
 class Player(Creature):
-    def __init__(self):
-        self.name = "David"
+    def __init__(self,name):
+        self.name = name
         self.health = 50
         self.guard = 0
         self.buff = None
         self.debuff = None
         self.movelist = [Card("Fireball", 2,0,"burn"),Card("Guard",0,2)]
+        self.gold = 0
         
 
 
     
 
 
-def creatureattack(creature):
-    randmove = randint(0,len(creature.moveset()))
-    print (randmove)
-    carduse(creature.moveset(randmove),creature,P1)
+
 
 def weakencounter():
   weakmonsters = [Slime(),Orc(),Wolf(),Zombie()]
@@ -87,18 +85,7 @@ def miniboss():
         monster = Spectre()
         
         
-def mapmaker(newmap):
-    
-    while len(newmap)<12:
-        counter = randint(0,4)
-        if counter == 0 or counter == 1 or counter == 2:
-            newmap.append("weak")
-        if counter == 3 and len(newmap) > 3 and newmap[-1] != "miniboss" and newmap[-2] != "miniboss":
-            newmap.append("miniboss")
-        if counter == 4 and len(newmap) > 2 and newmap[-1] != "rest":
-            newmap.append("rest")
-    newmap.append("boss")
-    
+
 
 
 class Game(Frame):
@@ -109,6 +96,9 @@ class Game(Frame):
   def __init__(self, master=None):
     Frame.__init__(self, master)                 
     self.master = master
+    self.map1 = self.mapmaker()
+    self.map2 = self.mapmaker()
+    self.map3 = self.mapmaker()
 
     #Creation of init_window
   def init_gamewindow(self):
@@ -129,76 +119,146 @@ class Game(Frame):
     # clear screen
     self.clearscreen()
     #create start screen
+    #Make the Title Label
     start = Label(self, text = "Adventures' Guild")
     start.pack()
+    # Place the Label
     start.place(x = 100,y = 225)
+    # Set the font and font size
     start.config(font=("Courier", 44))
 
     # creating a button instance
     startButton = Button(self, text="Start Game", command =self.selectmap)
-
     # placing the button on my window
     startButton.place(x=325, y=400)
+    # Set the font and font size
     startButton.config(font=(Game.font,Game.buttonsize))
 
+  def mapmaker(self):
+    newmap =[]
+    
+    while len(newmap)<12:
+        counter = randint(0,4)
+        if counter == 0 or counter == 1 or counter == 2:
+            newmap.append("weak")
+        if counter == 3 and len(newmap) > 3 and newmap[-1] != "miniboss" and newmap[-2] != "miniboss":
+            newmap.append("miniboss")
+        if counter == 4 and len(newmap) > 2 and newmap[-1] != "rest":
+            newmap.append("rest")
+    newmap.append("boss")
+    return newmap
+
+
+
   def selectmap(self):
-    column1 = 200
-    column2 = 400
+    # Set variables for the columns and rows for organization
+    column = 280
     row1 = 100
     row2 = 250
     row3 = 400
     row4 = 500
+    
+    # Clears the screen
     self.clearscreen()
-    selectedmap = tk.IntVar()
-    map1button = Radiobutton(self,variable = selectedmap, value = 0, text = "Map 1")
-    map1button.place(x = column1, y = row1)
-    map1button.config(font=(Game.font,Game.buttonsize))
-    map2button = Radiobutton(self,variable = selectedmap, value = 1, text = "Map 2")
-    map2button.place(x = column1, y = row2)
-    map2button.config(font=(Game.font,Game.buttonsize))
-    map3button = Radiobutton(self,variable = selectedmap, value = 2, text = "Map 3")
-    map3button.place(x = column1, y = row3)
-    map3button.config(font=(Game.font,Game.buttonsize))
-    showmap1Button = Button(self, text="Show Map 1")
-    showmap1Button.place(x = column2 , y = row1)
+    # Makes the show map buttons that take you to their respective map screen
+    showmap1Button = Button(self, text="Show Map 1", command = self.map1screen)
+    showmap1Button.place(x = column , y = row1)
     showmap1Button.config(font=(Game.font,Game.buttonsize))
-    showmap2Button = Button(self, text="Show Map 2")
-    showmap2Button.place(x = column2 , y = row2)
+    showmap2Button = Button(self, text="Show Map 2", command = self.map2screen)
+    showmap2Button.place(x = column , y = row2)
     showmap2Button.config(font=(Game.font,Game.buttonsize))
-    showmap3Button = Button(self, text="Show Map 3")
-    showmap3Button.place(x = column2 , y = row3)
+    showmap3Button = Button(self, text="Show Map 3", command = self.map3screen)
+    showmap3Button.place(x = column , y = row3)
     showmap3Button.config(font=(Game.font,Game.buttonsize))
-    selectmapButton = Button(self, text = "Start Adventure")
-    selectmapButton.place(x = 150, y = row4)
-    selectmapButton.config(font=(Game.font,Game.buttonsize))
+    # Makes a back button that takes you back to the start screen
     backButton = Button(self, text = "Back", command = self.startscreen)
-    backButton.place(x = 475, y = row4)
+    backButton.place(x = 330, y = row4)
     backButton.config(font=(Game.font,Game.buttonsize))
 
-  def mapscreen(self):
+
+  # Shows the selected map
+  def map1screen(self):
     self.clearscreen()
+    self.selectedmap = self.map1
+    # Makes a select map button for when you select a map
+    # This will start your adventure
+    selectmapButton = Button(self, text = "Create Character", command = self.createPlayer)
+    selectmapButton.place(x = 210, y = 410)
+    selectmapButton.config(font=(Game.font,Game.buttonsize))
     backButton = Button(self, text = "Back", command = self.selectmap)
     backButton.place(x = 325, y = 500)
+    backButton.config(font=(Game.font,Game.buttonsize))
     
-  def processmap(self):
-    encounter = selectedmap[self.mapposition]
-    if encounter == "weak":
-      Game.weakencounter
+  # Shows the selected map
+  def map2screen(self):
+    self.clearscreen()
+    self.selectedmap = self.map2
+    # Makes a select map button for when you select a map
+    # This will start your adventure
+    selectmapButton = Button(self, text = "Create Character", command = self.createPlayer)
+    selectmapButton.place(x = 210, y = 410)
+    selectmapButton.config(font=(Game.font,Game.buttonsize))
+    backButton = Button(self, text = "Back", command = self.selectmap)
+    backButton.place(x = 325, y = 500)
+    backButton.config(font=(Game.font,Game.buttonsize))
 
-  def encounter(self):
-    monster = Game.weakencounter()
+  # Shows the selected map
+  def map3screen(self):
+    self.clearscreen()
+    self.selectedmap = self.map3
+    # Makes a select map button for when you select a map
+    # This will start your adventure
+    selectmapButton = Button(self, text = "Create Character", command = self.createPlayer)
+    selectmapButton.place(x = 210, y = 410)
+    selectmapButton.config(font=(Game.font,Game.buttonsize))
+    backButton = Button(self, text = "Back", command = self.selectmap)
+    backButton.place(x = 325, y = 500)
+    backButton.config(font=(Game.font,Game.buttonsize))
+
+
+
+
+  def createPlayer(self):
+    self.clearscreen()
+    playername = Entry(self)
+    playername.pack()
+    playername.place(x = 250, y = 300)
+    playername.config(font=(Game.font,Game.buttonsize))
+    
+    # This will start your adventure
+    startadvButton = Button(self, text = "Start Adventure", command = self.processmap)
+    startadvButton.place(x = 150, y = 400)
+    startadvButton.config(font=(Game.font,Game.buttonsize))
+
+
+
+  # Function that processes the given map
+  def processmap(self,name):
+    self.clearscreen()
+    #selectedmap[self.mapposition]
+    P1 = Player(str(name))
+    print(P1)
+
+  def weakencounter(self):
+    monster = Game.getweak()
+
 
     # Monster attacks and player replenishes energy
     if player.energy < 1:
-      pass
+      creatureattack(monster)
     if monster.health < 1:
       Game.loot()
 
+  def creatureattack(creature):
+    randmove = randint(0,len(creature.moveset()))
+    print (randmove)
+    carduse(creature.moveset(randmove),creature,P1)
+
   def loot(self):
     # Give loot
-    pass
+    self.gold += 30
 
-  def weakencounter(self):
+  def getweak(self):
     weakmonsters = [Slime(),Orc(),Wolf(),Zombie()]
     randomcreature = weakmonsters[randint(0,3)]
     return randomcreature
@@ -222,3 +282,8 @@ g = Game(window)
 g.play()
 # wait for the window to close
 window.mainloop()
+
+
+
+
+
