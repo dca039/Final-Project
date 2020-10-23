@@ -220,13 +220,15 @@ class Game(Frame):
 
   def createPlayer(self):
     self.clearscreen()
-    playername = Entry(self)
+    name = StringVar()
+    playername = Entry(self, textvariable = name)
     playername.pack()
     playername.place(x = 250, y = 300)
     playername.config(font=(Game.font,Game.buttonsize))
-    
+    name.set("Player")
+ 
     # This will start your adventure
-    startadvButton = Button(self, text = "Start Adventure", command = self.processmap)
+    startadvButton = Button(self, text = "Start Adventure", command =lambda: self.processmap(name.get()))
     startadvButton.place(x = 150, y = 400)
     startadvButton.config(font=(Game.font,Game.buttonsize))
 
@@ -236,11 +238,13 @@ class Game(Frame):
   def processmap(self,name):
     self.clearscreen()
     #selectedmap[self.mapposition]
-    P1 = Player(str(name))
+    P1 = Player(name)
     print(P1)
+    Game.weakencounter()
 
   def weakencounter(self):
     monster = Game.getweak()
+    Game.combat(monster)
 
 
     # Monster attacks and player replenishes energy
