@@ -2,6 +2,9 @@ from random import randint
 from tkinter import *
 import tkinter as tk
 
+
+##############################################################################
+## CARD SECTION
 class Card:
   def __init__(self,name,damage = 0,guard = 0,debuff = None, buff = None):
     self.name = name
@@ -13,13 +16,16 @@ class Card:
   def __str__(self):
     return "{} , Attack = {} , Guard = {} , Buff = {} , Debuff = {}".format(self.name,self.damage,self.guard,self.buff,self.debuff)
 
+
+##############################################################################
+## CREATURE SECTION
 class Creature():
-    def __init__(self,name,health,guard,buff=None,debuff=None):
-        self.name = name
-        self.health = health
-        self.guard = guard
-        self.buff = buff
-        self.debuff = debuff
+    def __init__(self):
+        self.name = None
+        self.health = None
+        self.guard = None
+        self.buff = []
+        self.debuff = []
         
 
     def prtmoves(self):
@@ -33,8 +39,11 @@ class Creature():
       strengthcount = 3
       creature.debuff = card.debuff
       user.status = card.buff
+      card.whenused()
+      # Check buffs
       if user.buff == "strength":
           damage = card.damage + 2
+      
       user.guard = user.guard + card.guard
       realdamage = damage - creature.guard
       if realdamage > 0:
@@ -49,8 +58,35 @@ class Slime(Creature):
         self.name = Slime
         self.health = 20
         self.guard = 0
-        self.buff = None
-        self.debuff = None
+        self.buff = []
+        self.debuff = []
+        self.movelist = [Card("Fireball", 2,0,"burn"),Card("Guard",0,2)]
+
+class Orc(Creature):
+    def __init__(self):
+        self.name = Orc
+        self.health = 20
+        self.guard = 0
+        self.buff = []
+        self.debuff = []
+        self.movelist = [Card("Fireball", 2,0,"burn"),Card("Guard",0,2)]
+  
+class Wolf(Creature):
+    def __init__(self):
+        self.name = Wolf
+        self.health = 20
+        self.guard = 0
+        self.buff = []
+        self.debuff = []
+        self.movelist = [Card("Fireball", 2,0,"burn"),Card("Guard",0,2)]
+
+class Zombie(Creature):
+    def __init__(self):
+        self.name = Zombie
+        self.health = 20
+        self.guard = 0
+        self.buff = []
+        self.debuff = []
         self.movelist = [Card("Fireball", 2,0,"burn"),Card("Guard",0,2)]
         
 class Player(Creature):
@@ -58,22 +94,18 @@ class Player(Creature):
         self.name = name
         self.health = 50
         self.guard = 0
-        self.buff = None
-        self.debuff = None
-        self.movelist = [Card("Fireball", 2,0,"burn"),Card("Guard",0,2)]
+        self.buff = []
+        self.debuff = []
+        self.movelist = [Card("Fireball", 2,0,"burn"),Card("Guard",0,2),Card("Fireball", 2,0,"burn"),Card("Guard",0,2),Card("Fireball", 2,0,"burn"),Card("Guard",0,2),Card("Fireball", 2,0,"burn"),Card("Guard",0,2)]
         self.gold = 0
+        self.deck = []
+        self.hand = []
+        self.trash = []
+        self.energy = 3
         
 
 
     
-
-
-
-
-def weakencounter():
-  weakmonsters = [Slime(),Orc(),Wolf(),Zombie()]
-  randomcreature = weakmonsters[randint(0,3)]
-  return randomcreature
     
 def miniboss():
     randomminiboss = randint(0,2)
@@ -85,7 +117,8 @@ def miniboss():
         monster = Spectre()
         
         
-
+######################################################################
+## GAME SECTION
 
 
 class Game(Frame):
@@ -220,6 +253,7 @@ class Game(Frame):
 
   def createPlayer(self):
     self.clearscreen()
+    # Create the input that the player will use to make their name
     name = StringVar()
     playername = Entry(self, textvariable = name)
     playername.pack()
@@ -237,35 +271,102 @@ class Game(Frame):
   # Function that processes the given map
   def processmap(self,name):
     self.clearscreen()
+    # This should take in the map list and start procceding through the map encounters
     #selectedmap[self.mapposition]
+
+    # For testing purposes this is here
     P1 = Player(name)
     print(P1)
-    Game.weakencounter()
+    self.weakencounter(P1)
 
-  def weakencounter(self):
-    monster = Game.getweak()
-    Game.combat(monster)
+########################################################################################################
+## COMBAT SECTION  
 
+  # Weak encounter function
+  def weakencounter(self,player):
+    # Randomly select a weak monster from the pool
+    monster = self.getweak()
+    # Start combat with the player and monster
+    self.combat(monster,player)
 
-    # Monster attacks and player replenishes energy
+  # Combat function
+  def combat(self,monster,player):
+    # Sets the deck to the player's moveset
+    player.deck = player.movelist
+    # Start the combat with an empty hand and empty trash
+
+    # Player draws 5 cards and they show up on the screen
+    #cardbuttons
+    self.drawcard(5,player)
+    
+    # Once the player runs out of energy the monster attacks and player replenishes energy
     if player.energy < 1:
       creatureattack(monster)
+      self.turnend()
+     
+    # Once the moster dies the player is taken to the loot screen
     if monster.health < 1:
-      Game.loot()
+      self.loot()
 
+  # Function that runs everything that happens after a round has ended
+  def turnend(self,player):
+    # Moves the remaining cards in the player's hand to the trash
+    player.trash = player.trash + player.hand
+    # Clears the player's hand
+    player.hand = []
+    # Draws 5 cards
+    self.drawcard(5,player)
+    # Restore the player's energy
+    player.energy = 3
+    # status effects are removed
+    self.removestats()
+
+  # Draw cards function
+  def drawcard(self,draws,player):
+    # Draw i amount of cards
+    for i in range(0,draws):
+      # Randomly picks a card from the player's moveset
+      card = player.movelist[randint(0,(len(player.deck)-1))]
+      # Adds it to the hand
+      player.hand.append(card)
+      # Removes it from the deck
+      player.deck.remove(card)
+      # If the deck runs out of cards then it will grab them from the trash, then clear the trash
+      if len(player.deck) == 0:
+        player.deck = player.trash 
+        player.trash = []
+
+  # Removes statuses function
+  def removestats(self,player):
+    # Given list off all the different status effects
+    statuses = ["strength"]
+    for i in range(0,len(statuses)):
+      # If the player has at least one of these effects subtract one from the list
+      if player.stats(statuses[i]) < 0:
+        # Remove said status
+        player.stats.remove(statuses[i])
+
+  # Creature attacks function
   def creatureattack(creature):
-    randmove = randint(0,len(creature.moveset()))
+    # Picks a random move
+    randmove = randint(0,len(creature.movelist()))
     print (randmove)
-    carduse(creature.moveset(randmove),creature,P1)
-
-  def loot(self):
-    # Give loot
-    self.gold += 30
-
+    # Uses move on player
+    carduse(creature.movelist(randmove),creature,P1)
+ 
+  # Fetches a weak monster from a list
   def getweak(self):
     weakmonsters = [Slime(),Orc(),Wolf(),Zombie()]
     randomcreature = weakmonsters[randint(0,3)]
     return randomcreature
+
+  # Gives player loot
+  def loot(self):
+    # Give loot
+    self.gold += 30
+
+
+
   # play the game
   def play(self):
     # make the start screen
