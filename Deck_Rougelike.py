@@ -1,7 +1,7 @@
 from random import randint
 from tkinter import *
 import tkinter as tk
-
+from PIL import ImageTk,Image
 
 ##############################################################################
 ## CARD SECTION
@@ -102,20 +102,14 @@ class Player(Creature):
         self.hand = []
         self.trash = []
         self.energy = 3
+    
+
         
 
 
     
     
-def miniboss():
-    randomminiboss = randint(0,2)
-    if randomminiboss == ogre:
-        monster = Ogre()
-    if randomminiboss == mimic:
-        monster = Mimic()
-    if randomminiboss == spectre:
-        monster = Spectre()
-        
+
         
 ######################################################################
 ## GAME SECTION
@@ -291,6 +285,11 @@ class Game(Frame):
 
   # Combat function
   def combat(self,monster,player):
+    # Sets the battlefield up
+    self.battlefield(monster,player)
+
+
+
     # Sets the deck to the player's moveset
     player.deck = player.movelist
     # Start the combat with an empty hand and empty trash
@@ -301,12 +300,47 @@ class Game(Frame):
     
     # Once the player runs out of energy the monster attacks and player replenishes energy
     if player.energy < 1:
-      creatureattack(monster)
+      self.creatureattack(monster)
       self.turnend()
      
     # Once the moster dies the player is taken to the loot screen
     if monster.health < 1:
       self.loot()
+
+
+  def battlefield(self, op, target):
+    # Sets the background
+    background = Image.open("crucible.jpg")
+    background = background.resize((800,600), Image.ANTIALIAS)
+    backgroundImg =  ImageTk.PhotoImage(background)
+    my_background = Label(self,image=backgroundImg)
+    my_background.image = backgroundImg
+    my_background.pack()
+
+    player = Image.open("Hunter.jpg")
+    player = player.resize((80,40), Image.ANTIALIAS)
+    playerImg =  ImageTk.PhotoImage(player)
+    my_player = Label(self,image=playerImg)
+    my_player.image = playerImg
+    my_player.pack()
+    my_player.place(x = 150, y = 150)
+
+    monster = Image.open("Slime.jpg")
+    monster = monster.resize((80,40), Image.ANTIALIAS)
+    monsterImg =  ImageTk.PhotoImage(monster)
+    my_monster = Label(self,image=monsterImg)
+    my_monster.image = monsterImg
+    my_monster.pack()
+    my_monster.place(x = 400, y = 150)
+
+
+
+  
+       
+  
+    
+
+
 
   # Function that runs everything that happens after a round has ended
   def turnend(self,player):
@@ -331,6 +365,7 @@ class Game(Frame):
       player.hand.append(card)
       # Removes it from the deck
       player.deck.remove(card)
+      # Shows card in hand
       # If the deck runs out of cards then it will grab them from the trash, then clear the trash
       if len(player.deck) == 0:
         player.deck = player.trash 
@@ -374,8 +409,8 @@ class Game(Frame):
 
 
 ###############################################################################
-WIDTH = 800
-HEIGHT = 600
+#WIDTH = 800
+#HEIGHT = 600
 
 window = Tk()
 window.title("Adventure Guild")
