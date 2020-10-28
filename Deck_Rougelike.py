@@ -6,15 +6,45 @@ from PIL import ImageTk,Image
 ##############################################################################
 ## CARD SECTION
 class Card:
-  def __init__(self,name,damage = 0,guard = 0,debuff = None, buff = None):
+  def __init__(self,name,damage = 0,guard = 0,debuff = [], buff = [], energyuse = 0):
     self.name = name
     self.damage = damage
     self.guard = guard
     self.debuff = debuff
     self.buff = buff
+    self.energyuse = energyuse
     
   def __str__(self):
     return "{} , Attack = {} , Guard = {} , Buff = {} , Debuff = {}".format(self.name,self.damage,self.guard,self.buff,self.debuff)
+
+class FireBall(Card):
+  def __init__(self):
+    self.name = "FireBall"
+    self.damage = 5
+    self.guard = 0
+    self.debuff = ["burn","burn","burn"]
+    self.buff = []
+    self.energyuse = 1
+
+class Guard(Card):
+  def __init__(self):
+    self.name = "Guard"
+    self.damage = 0
+    self.guard = 5
+    self.debuff = []
+    self.buff = []
+    self.energyuse = 1
+
+class Adrenaline(Card):
+  def __init__(self):
+    self.name = "Adrenaline"
+    self.damage = 0
+    self.guard = 0
+    self.debuff = []
+    self.buff = ["resistance","resistance","resistance"]
+    self.energyuse = 1
+
+    
 
 
 ##############################################################################
@@ -24,34 +54,92 @@ class Creature():
         self.name = None
         self.health = None
         self.guard = None
-        self.buff = []
-        self.debuff = []
+        self.status = []
+        
         
 
     def prtmoves(self):
       return (self.movelist[0].name + " , " +self.movelist[1].name)
 
     def __str__(self):
-        return "{}, Health = {} , Buff = {}, Debuff = {} , Moveset = {}".format(self.name,self.health,self.buff,self.debuff,self.prtmoves())
+        return "{}, Health = {} , Status = {}, Moveset = {}".format(self.name,self.health,self.status,self.prtmoves())
 
-    def carduse(card,user,creature):
-      damage = 0
-      strengthcount = 3
-      creature.debuff = card.debuff
-      user.status = card.buff
-      card.whenused()
+    
+
+#########################################################################################
+## STATUS FUNCTIONS
+
+    def applybuff(self,user,target):
+      # Given list off all the different status effects
+      statuses = {"resistance":self.resistance(user)}
+      for i in range(0,len(statuses)):
+        # If the player has at least one of these effects subtract one from the list
+        if user.stats(statuses[i]) < 0:
+          # Run status function
+          statuses[i]
+
+
+    def resistance(user):
+      user.guard += 3
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#################################################################################
+## CARD USE FUNCTION
+
+    def carduse(self,card,user,target):
+      # Apply Buffs
+      target.debuff = target.status + card.debuff
+      user.status = user.status + card.buff
+
       # Check buffs
-      if user.buff == "strength":
-          damage = card.damage + 2
-      
+      self.applybuff(user,target)
+      # Apply Guard
       user.guard = user.guard + card.guard
-      realdamage = damage - creature.guard
+      # Apply Damage
+      realdamage = card.damage - target.guard
       if realdamage > 0:
           givendamage = realdamage
       else:
           givendamage = 0
-      creature.health = creature.health - givendamage
+      target.health = target.health - givendamage
+      # Subtract energy
+      user.energy = user.energy - card.energyuse
 
+################################################################################
+## PLAYER CLASS
+
+class Player(Creature):
+    def __init__(self,name):
+        self.name = name
+        self.health = 50
+        self.guard = 0
+        self.status = []
+        self.movelist = [FireBall(),Guard(),FireBall(),Guard(),FireBall(),Guard(),FireBall(),Guard(),FireBall(),Guard(),FireBall(),Guard()]
+        self.gold = 0
+        self.deck = []
+        self.hand = []
+        self.trash = []
+        self.energy = 3
+
+
+
+
+################################################################################
+##  MONSTER CLASSES
 
 class Slime(Creature):
     def __init__(self):
@@ -60,7 +148,7 @@ class Slime(Creature):
         self.guard = 0
         self.buff = []
         self.debuff = []
-        self.movelist = [Card("Fireball", 2,0,"burn"),Card("Guard",0,2)]
+        self.movelist = [FireBall(),Guard()]
 
 class Orc(Creature):
     def __init__(self):
@@ -69,7 +157,7 @@ class Orc(Creature):
         self.guard = 0
         self.buff = []
         self.debuff = []
-        self.movelist = [Card("Fireball", 2,0,"burn"),Card("Guard",0,2)]
+        self.movelist = [FireBall(),Guard()]
   
 class Wolf(Creature):
     def __init__(self):
@@ -78,7 +166,7 @@ class Wolf(Creature):
         self.guard = 0
         self.buff = []
         self.debuff = []
-        self.movelist = [Card("Fireball", 2,0,"burn"),Card("Guard",0,2)]
+        self.movelist = [FireBall(),Guard()]
 
 class Zombie(Creature):
     def __init__(self):
@@ -87,21 +175,9 @@ class Zombie(Creature):
         self.guard = 0
         self.buff = []
         self.debuff = []
-        self.movelist = [Card("Fireball", 2,0,"burn"),Card("Guard",0,2)]
+        self.movelist = [FireBall(),Guard()]
         
-class Player(Creature):
-    def __init__(self,name):
-        self.name = name
-        self.health = 50
-        self.guard = 0
-        self.buff = []
-        self.debuff = []
-        self.movelist = [Card("Fireball", 2,0,"burn"),Card("Guard",0,2),Card("Fireball", 2,0,"burn"),Card("Guard",0,2),Card("Fireball", 2,0,"burn"),Card("Guard",0,2),Card("Fireball", 2,0,"burn"),Card("Guard",0,2)]
-        self.gold = 0
-        self.deck = []
-        self.hand = []
-        self.trash = []
-        self.energy = 3
+
     
 
         
@@ -281,31 +357,48 @@ class Game(Frame):
     # Randomly select a weak monster from the pool
     monster = self.getweak()
     # Start combat with the player and monster
-    self.combat(monster,player)
+    self.setupcombat(monster,player)
 
   # Combat function
-  def combat(self,monster,player):
-    # Sets the battlefield up
-    self.battlefield(monster,player)
-
-
-
+  def setupcombat(self,monster,player):
     # Sets the deck to the player's moveset
     player.deck = player.movelist
-    # Start the combat with an empty hand and empty trash
-
     # Player draws 5 cards and they show up on the screen
-    #cardbuttons
     self.drawcard(5,player)
-    
-    # Once the player runs out of energy the monster attacks and player replenishes energy
-    if player.energy < 1:
-      self.creatureattack(monster)
-      self.turnend()
-     
+    self.combat(player,monster)
+
+  def combat(self,player,monster):
+    # Sets the battlefield up
+    self.battlefield(player,monster)
+    for i in range(0,len(player.hand)):
+      card = Image.open("Hunter.jpg")
+      card = card.resize((80,40), Image.ANTIALIAS)
+      cardImg =  ImageTk.PhotoImage(card)
+      my_card = Button(self,image=cardImg)
+      my_card['command'] = lambda idx =i, binst = my_card: self.cardpress(idx,binst,player,monster)
+      my_card.image = cardImg
+      my_card.pack()
+      my_card.place(x = (100*(i+1)), y = 400)
+
+    endturnbutton = Button(self, text = "End Turn", command = lambda: self.endturn(player,monster))
+    endturnbutton.place(x = 210, y = 510)
+    endturnbutton.config(font=(Game.font,Game.buttonsize))
+
     # Once the moster dies the player is taken to the loot screen
     if monster.health < 1:
       self.loot()
+    
+  # Once the player runs out of energy the monster attacks and player replenishes energy
+  def endturn(self,player,monster):
+    self.creatureattack(monster)
+    self.turnend()
+     
+
+  def cardpress(self,idx,binst,player,monster):
+    binst.destroy()
+    player.carduse(player.hand[idx],monster)
+   
+    
 
 
   def battlefield(self, op, target):
@@ -343,7 +436,7 @@ class Game(Frame):
 
 
   # Function that runs everything that happens after a round has ended
-  def turnend(self,player):
+  def turnend(self,player,monster):
     # Moves the remaining cards in the player's hand to the trash
     player.trash = player.trash + player.hand
     # Clears the player's hand
@@ -354,6 +447,7 @@ class Game(Frame):
     player.energy = 3
     # status effects are removed
     self.removestats()
+    self.combat(player,monster)
 
   # Draw cards function
   def drawcard(self,draws,player):
@@ -370,11 +464,23 @@ class Game(Frame):
       if len(player.deck) == 0:
         player.deck = player.trash 
         player.trash = []
+    #self.showhand(player)
+
+
+  def showhand(self,player,monster):
+    for i in range(0,len(player.hand)):
+      card = Image.open("Hunter.jpg")
+      card = card.resize((80,40), Image.ANTIALIAS)
+      cardImg =  ImageTk.PhotoImage(card)
+      my_card = Button(self,image=cardImg,command =lambda: player.carduse(player.hand[i],monster))
+      my_card.image = cardImg
+      my_card.pack()
+      my_card.place(x = (100*(i+1)), y = 400)
 
   # Removes statuses function
   def removestats(self,player):
     # Given list off all the different status effects
-    statuses = ["strength"]
+    statuses = ["resistance"]
     for i in range(0,len(statuses)):
       # If the player has at least one of these effects subtract one from the list
       if player.stats(statuses[i]) < 0:
