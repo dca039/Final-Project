@@ -20,15 +20,17 @@ class Card:
 class FireBall(Card):
   def __init__(self):
     self.name = "FireBall"
+    self.image = "fireball.jpg"
     self.damage = 5
     self.guard = 0
-    self.debuff = ["burn","burn","burn"]
+    self.debuff = []
     self.buff = []
     self.energyuse = 1
 
 class Guard(Card):
   def __init__(self):
     self.name = "Guard"
+    self.image = "guard.png"
     self.damage = 0
     self.guard = 5
     self.debuff = []
@@ -38,6 +40,7 @@ class Guard(Card):
 class Adrenaline(Card):
   def __init__(self):
     self.name = "Adrenaline"
+    self.image = "stim.png"
     self.damage = 0
     self.guard = 0
     self.debuff = []
@@ -69,19 +72,16 @@ class Creature():
 #########################################################################################
 ## STATUS FUNCTIONS
 
-    def applybuff(self,user,target):
+    def applybuff(self,target):
       # Given list off all the different status effects
-      statuses = {"resistance":self.resistance(user)}
-      for i in range(0,len(statuses)):
-        # If the player has at least one of these effects subtract one from the list
-        if user.stats(statuses[i]) < 0:
-          # Run status function
-          statuses[i]
+      ailments = ("resistance")
+     
+        
+        
+      
 
 
-    def resistance(user):
-      user.guard += 3
-
+ 
 
 
 
@@ -100,24 +100,35 @@ class Creature():
 #################################################################################
 ## CARD USE FUNCTION
 
-    def carduse(self,card,user,target):
+    def carduse(self,card,target):
+      addeddamage = 0
       # Apply Buffs
       target.debuff = target.status + card.debuff
-      user.status = user.status + card.buff
+      self.status = self.status + card.buff
 
       # Check buffs
-      self.applybuff(user,target)
+      self.applybuff(target)
       # Apply Guard
-      user.guard = user.guard + card.guard
+      self.guard = self.guard + card.guard
       # Apply Damage
-      realdamage = card.damage - target.guard
-      if realdamage > 0:
-          givendamage = realdamage
+      damage = addeddamage + card.damage
+      target.guard = target.guard - damage
+      if target.guard < 1:
+        stabdamage = abs(target.guard)
+        target.guard = 0
       else:
-          givendamage = 0
-      target.health = target.health - givendamage
+        stabdamage = 0
+      target.health = target.health - stabdamage
+      if target.health < 0:
+        target.health = 0
       # Subtract energy
-      user.energy = user.energy - card.energyuse
+      self.energy = self.energy - card.energyuse
+      print(card.name)
+      print("Player health")
+      print(self.health)
+      print("Monster health")
+      print(target.health)
+
 
 ################################################################################
 ## PLAYER CLASS
@@ -146,36 +157,36 @@ class Slime(Creature):
         self.name = Slime
         self.health = 20
         self.guard = 0
-        self.buff = []
-        self.debuff = []
+        self.status = []
         self.movelist = [FireBall(),Guard()]
+        self.energy = 999
 
 class Orc(Creature):
     def __init__(self):
         self.name = Orc
         self.health = 20
         self.guard = 0
-        self.buff = []
-        self.debuff = []
+        self.status = []
         self.movelist = [FireBall(),Guard()]
+        self.energy = 999
   
 class Wolf(Creature):
     def __init__(self):
         self.name = Wolf
         self.health = 20
         self.guard = 0
-        self.buff = []
-        self.debuff = []
+        self.status = []
         self.movelist = [FireBall(),Guard()]
+        self.energy = 999
 
 class Zombie(Creature):
     def __init__(self):
         self.name = Zombie
         self.health = 20
         self.guard = 0
-        self.buff = []
-        self.debuff = []
+        self.status = []
         self.movelist = [FireBall(),Guard()]
+        self.energy = 999
         
 
     
@@ -368,10 +379,11 @@ class Game(Frame):
     self.combat(player,monster)
 
   def combat(self,player,monster):
+    self.clearscreen()
     # Sets the battlefield up
     self.battlefield(player,monster)
     for i in range(0,len(player.hand)):
-      card = Image.open("Hunter.jpg")
+      card = Image.open(player.hand[i].image)
       card = card.resize((80,40), Image.ANTIALIAS)
       cardImg =  ImageTk.PhotoImage(card)
       my_card = Button(self,image=cardImg)
@@ -388,10 +400,8 @@ class Game(Frame):
     if monster.health < 1:
       self.loot()
     
-  # Once the player runs out of energy the monster attacks and player replenishes energy
-  def endturn(self,player,monster):
-    self.creatureattack(monster)
-    self.turnend()
+
+
      
 
   def cardpress(self,idx,binst,player,monster):
@@ -436,7 +446,10 @@ class Game(Frame):
 
 
   # Function that runs everything that happens after a round has ended
-  def turnend(self,player,monster):
+  def endturn(self,player,monster):
+    # Removes monster guard
+    monster.guard = 0
+    self.creatureattack(monster,player)
     # Moves the remaining cards in the player's hand to the trash
     player.trash = player.trash + player.hand
     # Clears the player's hand
@@ -445,8 +458,11 @@ class Game(Frame):
     self.drawcard(5,player)
     # Restore the player's energy
     player.energy = 3
+    # Removes Guard
+    player.guard = 0
     # status effects are removed
-    self.removestats()
+    self.removestats(player)
+    self.removestats(monster)
     self.combat(player,monster)
 
   # Draw cards function
@@ -454,7 +470,7 @@ class Game(Frame):
     # Draw i amount of cards
     for i in range(0,draws):
       # Randomly picks a card from the player's moveset
-      card = player.movelist[randint(0,(len(player.deck)-1))]
+      card = player.deck[randint(0,(len(player.deck)-1))]
       # Adds it to the hand
       player.hand.append(card)
       # Removes it from the deck
@@ -464,36 +480,28 @@ class Game(Frame):
       if len(player.deck) == 0:
         player.deck = player.trash 
         player.trash = []
-    #self.showhand(player)
 
 
-  def showhand(self,player,monster):
-    for i in range(0,len(player.hand)):
-      card = Image.open("Hunter.jpg")
-      card = card.resize((80,40), Image.ANTIALIAS)
-      cardImg =  ImageTk.PhotoImage(card)
-      my_card = Button(self,image=cardImg,command =lambda: player.carduse(player.hand[i],monster))
-      my_card.image = cardImg
-      my_card.pack()
-      my_card.place(x = (100*(i+1)), y = 400)
 
   # Removes statuses function
-  def removestats(self,player):
+  def removestats(self,creature):
     # Given list off all the different status effects
-    statuses = ["resistance"]
-    for i in range(0,len(statuses)):
+    ailments = ["resistance"]
+    for i in range(0,len(ailments)):
       # If the player has at least one of these effects subtract one from the list
-      if player.stats(statuses[i]) < 0:
+      if creature.status.count(ailments[i]) > 0:
         # Remove said status
-        player.stats.remove(statuses[i])
+        creature.status.remove(ailments[i])
+      else:
+        pass
 
   # Creature attacks function
-  def creatureattack(creature):
+  def creatureattack(self,creature,player):
     # Picks a random move
-    randmove = randint(0,len(creature.movelist()))
+    randmove = randint(0,len(creature.movelist)-1)
     print (randmove)
     # Uses move on player
-    carduse(creature.movelist(randmove),creature,P1)
+    creature.carduse(creature.movelist[randmove],player)
  
   # Fetches a weak monster from a list
   def getweak(self):
@@ -503,9 +511,12 @@ class Game(Frame):
 
   # Gives player loot
   def loot(self):
+    self.clearscreen()
     # Give loot
-    self.gold += 30
-
+   
+    backButton = Button(self, text = "Test")
+    backButton.place(x = 325, y = 500)
+    backButton.config(font=(Game.font,Game.buttonsize))
 
 
   # play the game
