@@ -74,21 +74,17 @@ class Creature():
 
     def applybuff(self,target):
       # Given list off all the different status effects
-      ailments = ("resistance")
+      # List of status effects: resistance
+      if self.status.count("resistance") > 0:
+        self.resistance()
+      else:
+         pass
+
      
         
-        
+    def resistance(self):
+      self.guard += 3
       
-
-
- 
-
-
-
-
-
-
-
 
 
 
@@ -136,10 +132,11 @@ class Creature():
 class Player(Creature):
     def __init__(self,name):
         self.name = name
+        self.fullhealth = 50
         self.health = 50
         self.guard = 0
         self.status = []
-        self.movelist = [FireBall(),Guard(),FireBall(),Guard(),FireBall(),Guard(),FireBall(),Guard(),FireBall(),Guard(),FireBall(),Guard()]
+        self.movelist = [FireBall(),FireBall(),FireBall(),FireBall(),Guard(),Guard(),Guard(),Guard(),Adrenaline(),Adrenaline(),Adrenaline(),Adrenaline()]
         self.gold = 0
         self.deck = []
         self.hand = []
@@ -155,6 +152,7 @@ class Player(Creature):
 class Slime(Creature):
     def __init__(self):
         self.name = Slime
+        self.fullhealth = 20
         self.health = 20
         self.guard = 0
         self.status = []
@@ -164,6 +162,7 @@ class Slime(Creature):
 class Orc(Creature):
     def __init__(self):
         self.name = Orc
+        self.fullhealth = 20
         self.health = 20
         self.guard = 0
         self.status = []
@@ -173,6 +172,7 @@ class Orc(Creature):
 class Wolf(Creature):
     def __init__(self):
         self.name = Wolf
+        self.fullhealth = 20
         self.health = 20
         self.guard = 0
         self.status = []
@@ -182,6 +182,7 @@ class Wolf(Creature):
 class Zombie(Creature):
     def __init__(self):
         self.name = Zombie
+        self.fullhealth = 20
         self.health = 20
         self.guard = 0
         self.status = []
@@ -407,14 +408,29 @@ class Game(Frame):
   def cardpress(self,idx,binst,player,monster):
     binst.destroy()
     player.carduse(player.hand[idx],monster)
-   
+    player.trash.append(player.hand[idx])
+    player.hand.remove(player.hand[idx])
+    self.combat(player,monster)
+    
     
 
+    
+  def clearbattlefield(self,op,creature):
+    my_background.delete()
+    my_player.delete()
+    playerhealth.delete()
+    my_monster.delete()
+    monsterhealth.delete()
 
-  def battlefield(self, op, target):
+    
+  def battlefield(self, op, creature):
+    PLAYER_X = 150
+    PLAYER_Y = 250
+    MONSTER_X = 910
+    MONSTER_Y = 200
     # Sets the background
-    background = Image.open("crucible.jpg")
-    background = background.resize((800,600), Image.ANTIALIAS)
+    background = Image.open("cave.jpg")
+    background = background.resize((1200,500), Image.ANTIALIAS)
     backgroundImg =  ImageTk.PhotoImage(background)
     my_background = Label(self,image=backgroundImg)
     my_background.image = backgroundImg
@@ -426,7 +442,11 @@ class Game(Frame):
     my_player = Label(self,image=playerImg)
     my_player.image = playerImg
     my_player.pack()
-    my_player.place(x = 150, y = 150)
+    my_player.place(x = PLAYER_X, y = PLAYER_Y)
+    playerhealth = Label(self,text = "{}/{}".format(op.health,op.fullhealth))
+    playerhealth.place(x=PLAYER_X,y= (PLAYER_Y + 40))
+    playerhealth.config(font = (Game.font,Game.buttonsize))
+          
 
     monster = Image.open("Slime.jpg")
     monster = monster.resize((80,40), Image.ANTIALIAS)
@@ -434,7 +454,10 @@ class Game(Frame):
     my_monster = Label(self,image=monsterImg)
     my_monster.image = monsterImg
     my_monster.pack()
-    my_monster.place(x = 400, y = 150)
+    my_monster.place(x = MONSTER_X, y = MONSTER_Y)
+    monsterhealth = Label(self,text = "{}/{}".format(creature.health,creature.fullhealth))
+    monsterhealth.place(x= MONSTER_X,y= (MONSTER_Y + 40))
+    monsterhealth.config(font = (Game.font,Game.buttonsize))
 
 
 
@@ -531,7 +554,7 @@ class Game(Frame):
 
 window = Tk()
 window.title("Adventure Guild")
-window.geometry("800x600")
+window.geometry("1366x768")
 
 # create the GUI as a Tkinter canvas inside the window
 g = Game(window)
