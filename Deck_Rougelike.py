@@ -41,7 +41,7 @@ class Adrenaline(Card):
   def __init__(self):
     self.name = "Adrenaline"
     self.image = "stim.png"
-    self.damage = 20
+    self.damage = 5
     self.guard = 0
     self.debuff = []
     self.buff = ["resistance","resistance","resistance"]
@@ -285,7 +285,7 @@ class Game(Frame):
             newmap.append("miniboss")
         if (counter == 4 or counter == 5) and len(newmap) > 2 and newmap[-1] != "rest":
             newmap.append("rest")
-        if (counter == 6 and newmap[-1] != "random" and len(newmap) > 2):
+        if (counter == 6 and len(newmap) > 2 and newmap[-1] != "random"):
           newmap.append("random")
     newmap.append("boss")
     print(newmap)
@@ -509,6 +509,7 @@ class Game(Frame):
     # Player draws 5 cards and they show up on the screen
     self.drawcard(5,player)
     self.turn = 0
+    player.energy = 3
     self.combat(player,monster)
     
 
@@ -553,12 +554,16 @@ class Game(Frame):
      
 
   def cardpress(self,idx,binst,player,monster):
-    binst.destroy()
-    player.carduse(player.hand[idx],monster)
-    player.trash.append(player.hand[idx])
-    player.hand.remove(player.hand[idx])
-    self.combat(player,monster)
-    
+    if (player.energy - player.hand[idx].energyuse) < 0:
+      
+      self.combat(player,monster)
+    else:
+      player.carduse(player.hand[idx],monster)
+      #binst.destroy()
+      player.trash.append(player.hand[idx])
+      player.hand.remove(player.hand[idx])
+      self.combat(player,monster)
+      
 
     
   def battlefield(self, op, creature):
@@ -683,17 +688,17 @@ class Game(Frame):
     lootcards = []
     # Decides what level of loot is given
     if self.lootlevel == "weak":
-      weakcardlist = [FireBall(),FireBall(),FireBall()]
+      cardlist = [FireBall(),FireBall(),FireBall()]
       # Set it equal so that the list is not messed up
-      picklist = weakcardlist
+      picklist = cardlist
     if self.lootlevel == "miniboss":
-      weakcardlist = [Lightning(),Lightning(),Lightning()]
+      cardlist = [Lightning(),Lightning(),Lightning()]
       # Set it equal so that the list is not messed up
-      picklist = weakcardlist
+      picklist = cardlist
     if self.lootlevel == "boss":
-      weakcardlist = [IceSpear(),IceSpear(),IceSpear()]
+      cardlist = [IceSpear(),IceSpear(),IceSpear()]
       # Set it equal so that the list is not messed up
-      picklist = weakcardlist
+      picklist = cardlist
     for i in range (0,3):
       randcard = randint(0,len(picklist)-1)
       lootcards.append(picklist[randcard])
