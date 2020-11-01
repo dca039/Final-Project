@@ -14,14 +14,14 @@ class Card:
     self.buff = buff
     self.energyuse = energyuse
     
-  def __str__(self):
-    return "{} , Attack = {} , Guard = {} , Buff = {} , Debuff = {}".format(self.name,self.damage,self.guard,self.buff,self.debuff)
+  
+    
 
 class FireBall(Card):
   def __init__(self):
     self.name = "FireBall"
     self.image = "fireball.jpg"
-    self.damage = 5
+    self.damage = 20
     self.guard = 0
     self.debuff = []
     self.buff = []
@@ -41,7 +41,7 @@ class Adrenaline(Card):
   def __init__(self):
     self.name = "Adrenaline"
     self.image = "stim.png"
-    self.damage = 0
+    self.damage = 20
     self.guard = 0
     self.debuff = []
     self.buff = ["resistance","resistance","resistance"]
@@ -84,7 +84,12 @@ class Creature():
       else:
         pass
 
-    
+    def printmovelist(self):
+      mymovelist = ""
+      for i in range(0,len(self.deck)):
+        mymovelist = mymovelist + self.deck[i].name
+      print (mymovelist)
+        
     
 
 #########################################################################################
@@ -154,9 +159,9 @@ class Player(Creature):
         self.health = 50
         self.guard = 0
         self.status = []
-        self.movelist = [FireBall(),FireBall(),FireBall(),FireBall(),Guard(),Guard(),Guard(),Guard(),Adrenaline(),Adrenaline(),Adrenaline(),Adrenaline()]
+        self.movelist = [Adrenaline(),Adrenaline(),Adrenaline(),Adrenaline(),Adrenaline(),Adrenaline(),Adrenaline(),Adrenaline()]
         self.gold = 0
-        self.deck = []
+        self.deck = [Adrenaline(),Adrenaline(),Adrenaline(),Adrenaline(),Adrenaline(),Adrenaline(),Adrenaline(),Adrenaline()]
         self.hand = []
         self.trash = []
         self.energy = 3
@@ -273,14 +278,17 @@ class Game(Frame):
     newmap =[]
     
     while len(newmap)<12:
-        counter = randint(0,4)
+        counter = randint(0,6)
         if counter == 0 or counter == 1 or counter == 2:
             newmap.append("weak")
         if counter == 3 and len(newmap) > 3 and newmap[-1] != "miniboss" and newmap[-2] != "miniboss":
             newmap.append("miniboss")
-        if counter == 4 and len(newmap) > 2 and newmap[-1] != "rest":
+        if (counter == 4 or counter == 5) and len(newmap) > 2 and newmap[-1] != "rest":
             newmap.append("rest")
+        if (counter == 6 and newmap[-1] != "random" and len(newmap) > 2):
+          newmap.append("random")
     newmap.append("boss")
+    print(newmap)
     return newmap
 
 
@@ -364,22 +372,36 @@ class Game(Frame):
     name.set("Player")
  
     # This will start your adventure
-    startadvButton = Button(self, text = "Start Adventure", command =lambda: self.processmap(name.get()))
+    startadvButton = Button(self, text = "Start Adventure", command =lambda: self.postcreatePlayer(name.get()))
     startadvButton.place(x = 150, y = 400)
     startadvButton.config(font=(Game.font,Game.buttonsize))
 
 
+  def postcreatePlayer(self,name):
+    P1 = Player(name)
+    self.processmap(P1)
 
   # Function that processes the given map
-  def processmap(self,name):
+  def processmap(self,player):
     self.clearscreen()
+    
+    position = self.mapposition
+    self.mapposition += 1
     # This should take in the map list and start procceding through the map encounters
-    #selectedmap[self.mapposition]
-    #self.mapposition += 1
-    # For testing purposes this is here
-    P1 = Player(name)
-    #self.weakchestencounter(P1)
-    self.weakencounter(P1)
+    if self.selectedmap[position] == "weak":
+      self.weakencounter(player)
+    elif self.selectedmap[position] == "miniboss":
+      self.minibossencounter(player)
+    elif self.selectedmap[position] == "boss":
+      self.bossencounter(player)
+    elif self.selectedmap[position] == "rest":
+      self.restencounter(player)
+    elif self.selectedmap[position] == "random":
+      self.weakchestencounter(player)
+    else:
+      self.processmap(player)
+    
+   
 
 
 
@@ -388,7 +410,7 @@ class Game(Frame):
 
   def restencounter(self,player):
     player.heal(20)
-    self.postencounter
+    self.postencounter(player)
 
   def weakchestencounter(self,player):
     self.clearscreen()
@@ -419,7 +441,7 @@ class Game(Frame):
 
   def openweakchest(self,player):
     prob = randint(0,100)
-    if prob < 70:
+    if prob < 0:
       self.lootlevel = "weak"
       self.loot(player)
     else:
@@ -440,17 +462,55 @@ class Game(Frame):
     # Start combat with the player and monster
     self.setupcombat(monster,player)
 
+  # Fetches a weak monster from a list
+  def getweak(self):
+    weakmonsters = [Wolf(),Zombie()]
+    randomcreature = weakmonsters[randint(0,len(weakmonsters)-1)]
+    return randomcreature
+
+  # Weak encounter function
+  def minibossencounter(self,player):
+    # Randomly select a weak monster from the pool
+    monster = self.getminiboss()
+    # Sets the loot given at the end of combat
+    self.lootlevel = "miniboss"
+    # Start combat with the player and monster
+    self.setupcombat(monster,player)
+
+  # Fetches a weak monster from a list
+  def getminiboss(self):
+    minibossmonsters = [Orc()]
+    randomcreature = minibossmonsters[randint(0,len(minibossmonsters)-1)]
+    return randomcreature
+
+  # Weak encounter function
+  def bossencounter(self,player):
+    # Randomly select a weak monster from the pool
+    monster = self.getboss()
+    # Sets the loot given at the end of combat
+    self.lootlevel = "boss"
+    # Start combat with the player and monster
+    self.setupcombat(monster,player)
+
+  # Fetches a weak monster from a list
+  def getboss(self):
+    bossmonsters = [Slime()]
+    randomcreature = bossmonsters[randint(0,len(bossmonsters)-1)]
+    return randomcreature
+
 ########################################################################################################
 ## COMBAT SECTION  
 
   # Combat function
   def setupcombat(self,monster,player):
     # Sets the deck to the player's moveset
-    player.deck = player.movelist
+    #player.deck = player.movelist
+    player.printmovelist()
     # Player draws 5 cards and they show up on the screen
     self.drawcard(5,player)
-    self.combat(player,monster)
     self.turn = 0
+    self.combat(player,monster)
+    
 
   def combat(self,player,monster):
     self.clearscreen()
@@ -479,13 +539,17 @@ class Game(Frame):
 
     # Once the moster dies the player is taken to the loot screen
     if monster.health < 1:
-      self.loot(player)
+      self.postcombat(player)
 
     if player.health < 1:
       self.deathscreen()
     
 
-
+  def postcombat(self,player):
+    player.deck = player.deck + player.hand + player.trash
+    player.hand = []
+    player.trash = []
+    self.loot(player)
      
 
   def cardpress(self,idx,binst,player,monster):
@@ -570,7 +634,8 @@ class Game(Frame):
     # Draw i amount of cards
     for i in range(0,draws):
       # Randomly picks a card from the player's moveset
-      card = player.deck[randint(0,(len(player.deck)-1))]
+      cardposition = randint(0,(len(player.deck)-1))
+      card = player.deck[cardposition]
       # Adds it to the hand
       player.hand.append(card)
       # Removes it from the deck
@@ -618,7 +683,15 @@ class Game(Frame):
     lootcards = []
     # Decides what level of loot is given
     if self.lootlevel == "weak":
-      weakcardlist = [Lightning(),Adrenaline(),IceSpear(),FireBall(),Guard()]
+      weakcardlist = [FireBall(),FireBall(),FireBall()]
+      # Set it equal so that the list is not messed up
+      picklist = weakcardlist
+    if self.lootlevel == "miniboss":
+      weakcardlist = [Lightning(),Lightning(),Lightning()]
+      # Set it equal so that the list is not messed up
+      picklist = weakcardlist
+    if self.lootlevel == "boss":
+      weakcardlist = [IceSpear(),IceSpear(),IceSpear()]
       # Set it equal so that the list is not messed up
       picklist = weakcardlist
     for i in range (0,3):
@@ -641,34 +714,17 @@ class Game(Frame):
     
 
   
-  def weakloot(self,player):
-    player.gold += 30
-    lootcards = []
-    # Weak Card List
-    weakcardlist = [Lightning(),Adrenaline(),IceSpear(),FireBall(),Guard()]
-    # Set it equal so that the list is not messed up
-    picklist = weakcardlist
-    for i in range (0,3):
-      randcard = randint(0,len(picklist)-1)
-      lootcards.append(picklist[randcard])
-      picklist.pop(randcard)
-
-    for i in range(0,len(lootcards)):
-      card = Image.open(lootcards[i].image)
-      card = card.resize((180,70), Image.ANTIALIAS)
-      cardImg =  ImageTk.PhotoImage(card)
-      my_card = Button(self,image=cardImg)
-      my_card['command'] = lambda idx =i: self.postloot(player,lootcards[idx])
-      my_card.image = cardImg
-      my_card.pack()
-      my_card.place(x = (200*(i+1)), y = 300)
 
   def postloot(self,player,card):
-    player.movelist.append(card)
+    player.deck.append(card)
+    player.printmovelist()
     self.postencounter(player)
+    
 
   def postencounter(self,player):
     self.clearscreen()
+    if player.health < 1:
+      self.deathscreen()
     # Show the map
     # Let the player look at deck
     # Button to continue onto the next encounter
