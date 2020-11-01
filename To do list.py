@@ -4,11 +4,12 @@
 
 
 What needs to happen:
-Combat needs gui
+Combat needs polished gui
 Map needs to be finished
 encounter lists need to be completed
-make rest encouter
+make rest encounter more polished
 make more cards
 make more monsters
-make gui for loot screen
+loot screen needs polished gui
 make pics for player and monsters
+make pics for attacks
