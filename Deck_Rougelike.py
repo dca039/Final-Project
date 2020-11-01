@@ -169,7 +169,7 @@ class Player(Creature):
 
 class Slime(Creature):
     def __init__(self):
-        self.name = Slime
+        self.name = "Slime"
         self.maxhealth = 20
         self.health = 20
         self.guard = 0
@@ -179,7 +179,7 @@ class Slime(Creature):
 
 class Orc(Creature):
     def __init__(self):
-        self.name = Orc
+        self.name = "Orc"
         self.maxhealth = 20
         self.health = 20
         self.guard = 0
@@ -189,7 +189,7 @@ class Orc(Creature):
   
 class Wolf(Creature):
     def __init__(self):
-        self.name = Wolf
+        self.name = "Wolf"
         self.maxhealth = 20
         self.health = 20
         self.guard = 0
@@ -199,7 +199,7 @@ class Wolf(Creature):
 
 class Zombie(Creature):
     def __init__(self):
-        self.name = Zombie
+        self.name = "Zombie"
         self.maxhealth = 20
         self.health = 20
         self.guard = 0
@@ -230,6 +230,7 @@ class Game(Frame):
     Frame.__init__(self, master)                 
     self.master = master
     self.mapposition = 0
+    self.turn = 0
     self.map1 = self.mapmaker()
     self.map2 = self.mapmaker()
     self.map3 = self.mapmaker()
@@ -377,7 +378,7 @@ class Game(Frame):
     #self.mapposition += 1
     # For testing purposes this is here
     P1 = Player(name)
-    
+    #self.weakchestencounter(P1)
     self.weakencounter(P1)
 
 
@@ -397,8 +398,24 @@ class Game(Frame):
     my_background = Label(self,image=backgroundImg)
     my_background.image = backgroundImg
     my_background.pack()
+    my_background.place(x = 0, y = 0)
 
-    self.openweakchest(player)
+    chestmessage = Text(self, height=5, width=50)
+    chestmessage.pack()
+    chestmessage.insert(tk.END, "A chest apears in front of  you.\n A warning is written on the lid.\n Open at your own risk")
+    chestmessage.place(x = 650,y = 10)
+    chestmessage.config(font = (Game.font,Game.buttonsize))
+
+    openButton = Button(self,text = "Open the chest. 70% chance of success", command = lambda: self.openweakchest(player))
+    openButton.pack()
+    openButton.config(font = (Game.font,Game.buttonsize))
+    openButton.place(x = 650, y = 600)
+
+    walkawayButton = Button(self,text = "Walk Away", command = lambda: self.postencounter(player))
+    walkawayButton.pack()
+    walkawayButton.config(font = (Game.font,Game.buttonsize))
+    walkawayButton.place(x = 650, y = 650)
+    
 
   def openweakchest(self,player):
     prob = randint(0,100)
@@ -407,7 +424,7 @@ class Game(Frame):
       self.loot(player)
     else:
       player.health -= 10
-    self.postencounter(player)
+      self.postencounter(player)
     
     
 
@@ -433,6 +450,7 @@ class Game(Frame):
     # Player draws 5 cards and they show up on the screen
     self.drawcard(5,player)
     self.combat(player,monster)
+    self.turn = 0
 
   def combat(self,player,monster):
     self.clearscreen()
@@ -452,9 +470,19 @@ class Game(Frame):
     endturnbutton.place(x = 210, y = 510)
     endturnbutton.config(font=(Game.font,Game.buttonsize))
 
+    if self.turn > 0:
+      # Print card used
+      attackmessage = Label(self,text = "{} used {}".format(monster.name,self.monsterattack.name))
+      attackmessage.pack()
+      attackmessage.place(x = 650,y = 600)
+      attackmessage.config(font = (Game.font,Game.buttonsize))
+
     # Once the moster dies the player is taken to the loot screen
     if monster.health < 1:
       self.loot(player)
+
+    if player.health < 1:
+      self.deathscreen()
     
 
 
@@ -529,6 +557,9 @@ class Game(Frame):
     player.energy = 3
     # Removes Guard
     player.guard = 0
+
+    self.turn += 1
+    
     # status effects are removed
     self.removestats(player)
     self.removestats(monster)
@@ -568,9 +599,12 @@ class Game(Frame):
   def creatureattack(self,creature,player):
     # Picks a random move
     randmove = randint(0,len(creature.movelist)-1)
-    print (randmove)
+    
     # Uses move on player
     creature.carduse(creature.movelist[randmove],player)
+    self.monsterattack = creature.movelist[randmove]
+    
+    
  
   # Fetches a weak monster from a list
   def getweak(self):
@@ -581,6 +615,7 @@ class Game(Frame):
   # Gives player loot
   def loot(self,player):
     self.clearscreen()
+    lootcards = []
     # Decides what level of loot is given
     if self.lootlevel == "weak":
       weakcardlist = [Lightning(),Adrenaline(),IceSpear(),FireBall(),Guard()]
@@ -604,9 +639,6 @@ class Game(Frame):
     
     
     
-    backButton = Button(self, text = "Test")
-    backButton.place(x = 325, y = 500)
-    backButton.config(font=(Game.font,Game.buttonsize))
 
   
   def weakloot(self,player):
@@ -641,6 +673,18 @@ class Game(Frame):
     # Let the player look at deck
     # Button to continue onto the next encounter
     continueButton = Button(self, text = "Continue", command = lambda: self.processmap(player))
+    continueButton.place(x = 325, y = 500)
+    continueButton.config(font=(Game.font,Game.buttonsize))
+
+
+  def deathscreen(self):
+    self.clearscreen()
+    deathmessage = Label(self,text = "YOU DIED!! GET BETTER!!")
+    deathmessage.pack()
+    deathmessage.place(x = 650,y = 600)
+    deathmessage.config(font = (Game.font,Game.buttonsize))
+
+    continueButton = Button(self, text = "Restart", command = lambda: self.play())
     continueButton.place(x = 325, y = 500)
     continueButton.config(font=(Game.font,Game.buttonsize))
     
