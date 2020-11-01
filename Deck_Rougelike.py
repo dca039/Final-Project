@@ -6,13 +6,20 @@ from PIL import ImageTk,Image
 ##############################################################################
 ## CARD SECTION
 class Card:
-  def __init__(self,name,damage = 0,guard = 0,debuff = [], buff = [], energyuse = 0):
-    self.name = name
-    self.damage = damage
-    self.guard = guard
-    self.debuff = debuff
-    self.buff = buff
-    self.energyuse = energyuse
+  # Initializes the Card class
+  def __init__(self):
+    # Sets the card's name
+    self.name = None
+    # Sets the card's damage
+    self.damage = None
+    # Sets the card's guard
+    self.guard = None
+    # Sets the card's debuffs
+    self.debuff = []
+    # Sets the card's buffs
+    self.buff = []
+    # Sets the card's energy use
+    self.energyuse = None
     
   
     
@@ -21,7 +28,7 @@ class FireBall(Card):
   def __init__(self):
     self.name = "FireBall"
     self.image = "fireball.jpg"
-    self.damage = 20
+    self.damage = 5
     self.guard = 0
     self.debuff = []
     self.buff = []
@@ -51,7 +58,7 @@ class Lightning(Card):
   def __init__(self):
     self.name = "Lightning"
     self.image = "lightning.jpg"
-    self.damage = 5
+    self.damage = 1
     self.guard = 0
     self.debuff = []
     self.buff = []
@@ -71,14 +78,22 @@ class IceSpear(Card):
 ##############################################################################
 ## CREATURE SECTION
 class Creature():
+    # Initializes the Creature class
     def __init__(self):
+        # Sets the creature's name
         self.name = None
+        # Sets the creature's health
         self.health = None
+        # Sets the creature's guard
         self.guard = None
+        # Sets the creature's status
         self.status = []
-        
+
+    # Function that heals the user    
     def heal(self,regen):
+      # Gives the user a certain amount of health back
       self.health += regen
+      # If the user heals more than their max health then cap it at the max health
       if self.health > self.maxhealth:
         self.health = self.maxhealth
       else:
@@ -94,7 +109,7 @@ class Creature():
 
 #########################################################################################
 ## STATUS FUNCTIONS
-
+    # Function that will apply user's buffs to the card use
     def applybuff(self,target):
       # Given list off all the different status effects
       # List of status effects: resistance
@@ -104,9 +119,10 @@ class Creature():
          pass
 
      
-        
+    # Resistance function that adds 1 guard every time a card is used
     def resistance(self):
-      self.guard += 3
+      # Adds one guard
+      self.guard += 1
       
 
 
@@ -130,40 +146,56 @@ class Creature():
       # Apply Guard
       self.guard = self.guard + card.guard
       # Apply Damage
+      # Adds the damage from buffs to the damage of the card
       damage = addeddamage + card.damage
+      # Subtracts the guard from the damage
       target.guard = target.guard - damage
+      # If the guard is less than one 
       if target.guard < 1:
+        # Set the remaining damage to damage that will be inflicted
         stabdamage = abs(target.guard)
+        # Sets the guard to 0
         target.guard = 0
+      # If the damage does not get through the guard
       else:
+        # No damage is taken
         stabdamage = 0
+      # Subtracts the final damage from the target's health
       target.health = target.health - stabdamage
+      # If the target's health is less than 0 set it to 0
       if target.health < 0:
         target.health = 0
       # Subtract energy
       self.energy = self.energy - card.energyuse
-      print(card.name)
-      print("Player health")
-      print(self.health)
-      print("Monster health")
-      print(target.health)
 
 
 ################################################################################
 ## PLAYER CLASS
 
 class Player(Creature):
+    # Initializes the PLayer class
     def __init__(self,name):
+        # Sets the player's name
         self.name = name
+        # Sets the player's max health
         self.maxhealth = 50
+        # Sets the player's health
         self.health = 50
+        # Sets the player's guard
         self.guard = 0
+        # Sets the player's status
         self.status = []
-        self.movelist = [Adrenaline(),Adrenaline(),Adrenaline(),Adrenaline(),Adrenaline(),Adrenaline(),Adrenaline(),Adrenaline()]
+        # Sets the player's gold
         self.gold = 0
-        self.deck = [Adrenaline(),Adrenaline(),Adrenaline(),Adrenaline(),Adrenaline(),Adrenaline(),Adrenaline(),Adrenaline()]
+        # Sets the player's deck
+        self.deck = [Adrenaline(),Lightning(),Lightning(),Lightning(),Lightning(),Lightning(),Lightning()]
+        # Sets the player's hand
         self.hand = []
+        # Sets the player's trash
         self.trash = []
+        # Sets the player's max energy
+        self.maxenergy = 3
+        # Sets the player's energy
         self.energy = 3
 
 
@@ -228,19 +260,24 @@ class Zombie(Creature):
 
 class Game(Frame):
 
+  # Sets the Game's font
   font = "Courier"
+  # Sets the Game's button size
   buttonsize = 20 
 
   def __init__(self, master=None):
-    Frame.__init__(self, master)                 
+    Frame.__init__(self, master)
     self.master = master
+    # Sets the Game's map position
     self.mapposition = 0
+    # Sets the Game's turn number
     self.turn = 0
+    # Sets the Game's map choices
     self.map1 = self.mapmaker()
     self.map2 = self.mapmaker()
     self.map3 = self.mapmaker()
 
-    #Creation of init_window
+  #Creation of init_window
   def init_gamewindow(self):
 
     # changing the title of our master widget      
@@ -251,14 +288,15 @@ class Game(Frame):
 
     self.startscreen()
 
+  # Clears the screan of widgets
   def clearscreen(self):
     for widget in Game.winfo_children(self):
       widget.destroy()
 
+  # Creates the start screen
   def startscreen(self):
     # clear screen
     self.clearscreen()
-    #create start screen
     #Make the Title Label
     start = Label(self, text = "Adventures' Guild")
     start.pack()
@@ -274,21 +312,30 @@ class Game(Frame):
     # Set the font and font size
     startButton.config(font=(Game.font,Game.buttonsize))
 
+  # Function that makes the maps randomly
   def mapmaker(self):
+    # Makes an empty map
     newmap =[]
-    
+    # While the map has less than 12 encounters
     while len(newmap)<12:
+        # Random number that will decide which encounter is chosen
         counter = randint(0,6)
         if counter == 0 or counter == 1 or counter == 2:
+            # Adds a weak encounter
             newmap.append("weak")
         if counter == 3 and len(newmap) > 3 and newmap[-1] != "miniboss" and newmap[-2] != "miniboss":
+            # Adds a miniboss encounter
             newmap.append("miniboss")
         if (counter == 4 or counter == 5) and len(newmap) > 2 and newmap[-1] != "rest":
+            # Adds a rest encounter
             newmap.append("rest")
         if (counter == 6 and len(newmap) > 2 and newmap[-1] != "random"):
-          newmap.append("random")
+            # Adds a random encounter
+            newmap.append("random")
+    # Adds a boss fight at the end of the map
     newmap.append("boss")
     print(newmap)
+    # Returns the made map
     return newmap
 
 
@@ -384,22 +431,22 @@ class Game(Frame):
   # Function that processes the given map
   def processmap(self,player):
     self.clearscreen()
-    
+    # Grabs the map position
     position = self.mapposition
+    # Increments it up
     self.mapposition += 1
-    # This should take in the map list and start procceding through the map encounters
+    # Checks what encounter to run then runs it
     if self.selectedmap[position] == "weak":
       self.weakencounter(player)
-    elif self.selectedmap[position] == "miniboss":
+    if self.selectedmap[position] == "miniboss":
       self.minibossencounter(player)
-    elif self.selectedmap[position] == "boss":
+    if self.selectedmap[position] == "boss":
       self.bossencounter(player)
-    elif self.selectedmap[position] == "rest":
+    if self.selectedmap[position] == "rest":
       self.restencounter(player)
-    elif self.selectedmap[position] == "random":
+    if self.selectedmap[position] == "random":
       self.weakchestencounter(player)
-    else:
-      self.processmap(player)
+    
     
    
 
@@ -408,12 +455,18 @@ class Game(Frame):
 #######################################################################################################
 ## EVENT ENCOUNTER SECTION
 
+  # Rest encounter function
   def restencounter(self,player):
+    # Heals the player
     player.heal(20)
+    # Then continues onto the map 
     self.postencounter(player)
 
+  # Weak chest encounter
   def weakchestencounter(self,player):
+    # Clears the screen
     self.clearscreen()
+    # Sets the background
     background = Image.open("chest.jpg")
     background = background.resize((600,700), Image.ANTIALIAS)
     backgroundImg =  ImageTk.PhotoImage(background)
@@ -422,28 +475,34 @@ class Game(Frame):
     my_background.pack()
     my_background.place(x = 0, y = 0)
 
+    # Outputs a message to the player
     chestmessage = Text(self, height=5, width=50)
     chestmessage.pack()
     chestmessage.insert(tk.END, "A chest apears in front of  you.\n A warning is written on the lid.\n Open at your own risk")
     chestmessage.place(x = 650,y = 10)
     chestmessage.config(font = (Game.font,Game.buttonsize))
 
+    # Makes a open chest button with the odds of the player succeding
     openButton = Button(self,text = "Open the chest. 70% chance of success", command = lambda: self.openweakchest(player))
     openButton.pack()
     openButton.config(font = (Game.font,Game.buttonsize))
     openButton.place(x = 650, y = 600)
 
+    # Makes a walk away button 
     walkawayButton = Button(self,text = "Walk Away", command = lambda: self.postencounter(player))
     walkawayButton.pack()
     walkawayButton.config(font = (Game.font,Game.buttonsize))
     walkawayButton.place(x = 650, y = 650)
     
-
+  # Function if the player decides to open the chest
   def openweakchest(self,player):
+    # Picks a random number
     prob = randint(0,100)
-    if prob < 0:
+    # If the number is less than 70 then the player gets weak level loot
+    if prob < 70:
       self.lootlevel = "weak"
       self.loot(player)
+    # If the player fails then it takes 10 damage
     else:
       player.health -= 10
       self.postencounter(player)
@@ -477,7 +536,7 @@ class Game(Frame):
     # Start combat with the player and monster
     self.setupcombat(monster,player)
 
-  # Fetches a weak monster from a list
+  # Fetches a miniboss monster from a list
   def getminiboss(self):
     minibossmonsters = [Orc()]
     randomcreature = minibossmonsters[randint(0,len(minibossmonsters)-1)]
@@ -492,7 +551,7 @@ class Game(Frame):
     # Start combat with the player and monster
     self.setupcombat(monster,player)
 
-  # Fetches a weak monster from a list
+  # Fetches a boss monster from a list
   def getboss(self):
     bossmonsters = [Slime()]
     randomcreature = bossmonsters[randint(0,len(bossmonsters)-1)]
@@ -503,13 +562,12 @@ class Game(Frame):
 
   # Combat function
   def setupcombat(self,monster,player):
-    # Sets the deck to the player's moveset
-    #player.deck = player.movelist
-    player.printmovelist()
     # Player draws 5 cards and they show up on the screen
     self.drawcard(5,player)
     self.turn = 0
-    player.energy = 3
+    player.guard = 0
+    player.status = []
+    player.energy = player.maxenergy
     self.combat(player,monster)
     
 
@@ -517,20 +575,23 @@ class Game(Frame):
     self.clearscreen()
     # Sets the battlefield up
     self.battlefield(player,monster)
+    #Shows the cards in the player's hand
     for i in range(0,len(player.hand)):
       card = Image.open(player.hand[i].image)
       card = card.resize((80,40), Image.ANTIALIAS)
       cardImg =  ImageTk.PhotoImage(card)
       my_card = Button(self,image=cardImg)
-      my_card['command'] = lambda idx =i, binst = my_card: self.cardpress(idx,binst,player,monster)
+      my_card['command'] = lambda idx =i: self.cardpress(idx,player,monster)
       my_card.image = cardImg
       my_card.pack()
       my_card.place(x = (100*(i+1)), y = 400)
 
+    # End turn button that will end the player's turn
     endturnbutton = Button(self, text = "End Turn", command = lambda: self.endturn(player,monster))
     endturnbutton.place(x = 210, y = 510)
     endturnbutton.config(font=(Game.font,Game.buttonsize))
 
+    # Outputs the monster's attack on the player
     if self.turn > 0:
       # Print card used
       attackmessage = Label(self,text = "{} used {}".format(monster.name,self.monsterattack.name))
@@ -542,25 +603,32 @@ class Game(Frame):
     if monster.health < 1:
       self.postcombat(player)
 
+    # If the player dies it takes them to the death screen
     if player.health < 1:
       self.deathscreen()
     
-
+  # After combat function for clean up 
   def postcombat(self,player):
+    # Re-assembles the player's deck
     player.deck = player.deck + player.hand + player.trash
+    # Clears the hand and trash
     player.hand = []
     player.trash = []
+    # Proceed to the loot room
     self.loot(player)
      
-
-  def cardpress(self,idx,binst,player,monster):
+  # Card function that will activate when a card is pressed
+  def cardpress(self,idx,player,monster):
+    # If player does not have enough energy then they can not use the card
     if (player.energy - player.hand[idx].energyuse) < 0:
-      
       self.combat(player,monster)
+    # If they do have enough energy
     else:
+      # Player uses the card
       player.carduse(player.hand[idx],monster)
-      #binst.destroy()
+      # They move the card to the trash
       player.trash.append(player.hand[idx])
+      # Removes the card from their hand
       player.hand.remove(player.hand[idx])
       self.combat(player,monster)
       
@@ -579,6 +647,7 @@ class Game(Frame):
     my_background.image = backgroundImg
     my_background.pack()
 
+    # Sets the player's image
     player = Image.open("Hunter.jpg")
     player = player.resize((80,40), Image.ANTIALIAS)
     playerImg =  ImageTk.PhotoImage(player)
@@ -586,11 +655,16 @@ class Game(Frame):
     my_player.image = playerImg
     my_player.pack()
     my_player.place(x = PLAYER_X, y = PLAYER_Y)
+    # Shows the player's health
     playerhealth = Label(self,text = "{}/{}".format(op.health,op.maxhealth))
     playerhealth.place(x=PLAYER_X,y= (PLAYER_Y + 40))
     playerhealth.config(font = (Game.font,Game.buttonsize))
+    # Shows the player's guard
+    playerguard = Label(self,text = "{} Guard".format(op.guard))
+    playerguard.place(x=PLAYER_X,y= (PLAYER_Y + 80))
+    playerguard.config(font = (Game.font,Game.buttonsize))
           
-
+    # Shows the monster's image
     monster = Image.open("Slime.jpg")
     monster = monster.resize((80,40), Image.ANTIALIAS)
     monsterImg =  ImageTk.PhotoImage(monster)
@@ -598,10 +672,14 @@ class Game(Frame):
     my_monster.image = monsterImg
     my_monster.pack()
     my_monster.place(x = MONSTER_X, y = MONSTER_Y)
+    # Shows the monster's health
     monsterhealth = Label(self,text = "{}/{}".format(creature.health,creature.maxhealth))
     monsterhealth.place(x= MONSTER_X,y= (MONSTER_Y + 40))
     monsterhealth.config(font = (Game.font,Game.buttonsize))
-
+    # SHows the monster's guard
+    monsterguard = Label(self,text = "{} Guard".format(creature.guard))
+    monsterguard.place(x=MONSTER_X,y= (MONSTER_Y + 80))
+    monsterguard.config(font = (Game.font,Game.buttonsize))
 
 
   
@@ -623,10 +701,10 @@ class Game(Frame):
     # Draws 5 cards
     self.drawcard(5,player)
     # Restore the player's energy
-    player.energy = 3
+    player.energy = player.maxenergy
     # Removes Guard
     player.guard = 0
-
+    # Increments the turn number
     self.turn += 1
     
     # status effects are removed
@@ -675,12 +753,6 @@ class Game(Frame):
     self.monsterattack = creature.movelist[randmove]
     
     
- 
-  # Fetches a weak monster from a list
-  def getweak(self):
-    weakmonsters = [Slime(),Orc(),Wolf(),Zombie()]
-    randomcreature = weakmonsters[randint(0,3)]
-    return randomcreature
 
   # Gives player loot
   def loot(self,player):
@@ -699,11 +771,12 @@ class Game(Frame):
       cardlist = [IceSpear(),IceSpear(),IceSpear()]
       # Set it equal so that the list is not messed up
       picklist = cardlist
+    # Picks 3 cards from the list
     for i in range (0,3):
       randcard = randint(0,len(picklist)-1)
       lootcards.append(picklist[randcard])
       picklist.pop(randcard)
-
+    # Presents the cards to the player to take 1
     for i in range(0,len(lootcards)):
       card = Image.open(lootcards[i].image)
       card = card.resize((180,70), Image.ANTIALIAS)
@@ -719,15 +792,16 @@ class Game(Frame):
     
 
   
-
+  # Post loot function for cleanup
   def postloot(self,player,card):
+    # Gives the player their chosen card
     player.deck.append(card)
-    player.printmovelist()
     self.postencounter(player)
     
-
+  # Post encounter function for cleanup
   def postencounter(self,player):
     self.clearscreen()
+    # If player is dead then go to death screen
     if player.health < 1:
       self.deathscreen()
     # Show the map
@@ -737,14 +811,15 @@ class Game(Frame):
     continueButton.place(x = 325, y = 500)
     continueButton.config(font=(Game.font,Game.buttonsize))
 
-
+  # Death screen function
   def deathscreen(self):
     self.clearscreen()
+    # Tell the player that they died 
     deathmessage = Label(self,text = "YOU DIED!! GET BETTER!!")
     deathmessage.pack()
     deathmessage.place(x = 650,y = 600)
     deathmessage.config(font = (Game.font,Game.buttonsize))
-
+    # Restart button
     continueButton = Button(self, text = "Restart", command = lambda: self.play())
     continueButton.place(x = 325, y = 500)
     continueButton.config(font=(Game.font,Game.buttonsize))
@@ -757,12 +832,12 @@ class Game(Frame):
 
 
 ###############################################################################
-#WIDTH = 1366
-#HEIGHT = 768
+WIDTH = 1366
+HEIGHT = 768
 
 window = Tk()
 window.title("Adventure Guild")
-window.geometry("1366x768")
+window.geometry("{}x{}".format(WIDTH,HEIGHT))
 
 # create the GUI as a Tkinter canvas inside the window
 g = Game(window)
