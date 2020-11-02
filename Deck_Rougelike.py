@@ -96,7 +96,7 @@ class MarksWomn(Card):
 
 class Legionares(Card):
   def __init__(self):
-    self.name = "Legionares"
+    self.name = "Legionare"
     self.image = "legionare.jpg"
     self.damage = 0
     self.guard = 10
@@ -104,26 +104,80 @@ class Legionares(Card):
     self.buff = []
     self.energy = 2
 
-class VineWip(Card):
+class VineWhip(Card):
   def __init__(self):
-    self.name = "Vine Wip"
+    self.name = "Vine Whip"
     self.image = "vine.jpg"
     self.damage = 1
     self.guard = 0
     self.debuff = []
     self.buff = []
-    self.energy = 1
+    self.energy = 0
 
 class SwordFury(Card):
   def __init__(self):
     self.name = "Sword Fury"
     self.image = "sword.jpg"
-    self.damage = 5
+    self.damage = 10
     self.guard = 0
     self.debuff = []
     self.buff = []
+    self.energy = 2
+
+class PoisonArrow(Card):
+  def __init__(self):
+    self.name = "Poison Arrow"
+    self.image = "poisonarrow.jpg"
+    self.damage = 5
+    self.guard = 0
+    self.debuff = ["poison"]
+    self.buff = []
+    self.stacks = 3
     self.energy = 1
 
+class HealthPotion(Card):
+  def __init__(self):
+    self.name = "Health Potion"
+    self.image = "healthpotion.jpg"
+    self.damage = 0
+    self.guard = 0
+    self.debuff = []
+    self.buff = ["heal"]
+    self.stacks = 1
+    self.energy = 1
+
+class Avalanche(Card):
+  def __init__(self):
+    self.name = "Avalanche"
+    self.image = "avalanche.jpg"
+    self.damage = 10
+    self.guard = 0
+    self.debuff = []
+    self.buff = []
+    self.stacks = []
+    self.energy = 2
+
+class LavaSmash(Card):
+  def __init__(self):
+    self.name = "Lava Smash"
+    self.image = "lava.jpg"
+    self.damage = 20
+    self.guard = 0
+    self.debuff = []
+    self.buff = []
+    self.stacks = []
+    self.energy = 3
+
+class KnifeThrow(Card):
+  def __init__(self):
+    self.name = "Knife Throw"
+    self.image = "knife.jpg"
+    self.damage = 1
+    self.guard = 0
+    self.debuff = []
+    self.buff = []
+    self.stacks = []
+    self.energy = 1
 
 
 
@@ -192,7 +246,8 @@ class Creature():
       # List of status effects: resistance
       if self.status.count("resistance") > 0:
         self.resistance()
-      
+      if self.status.count("heal") > 0:
+        self.heal()
       else:
          pass
 
