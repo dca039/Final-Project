@@ -141,13 +141,14 @@ class Artifact():
     self.name = None
     self.image = None
 
-  def ability(self,user):
+  #def ability(self,user):
     
 
 
 class BalanceBraclet(Artifact):
-  self.name = "Balance Braclet"
-  self.image = "slime.jpg"
+  def __init__(self):
+    self.name = "Balance Braclet"
+    self.image = "slime.jpg"
   
     
 
@@ -402,39 +403,39 @@ class Game(Frame):
   # Function that makes the maps randomly
   def mapmaker(self):
     # Makes an empty map
-    newmap =[]
+    newmap = []
+    
     # While the map has less than 12 encounters
     while len(newmap)<12:
         # Random number that will decide which encounter is chosen
         counter = randint(0,6)
         if counter == 0 or counter == 1 or counter == 2:
             # Adds a weak encounter
-            newmap.append("weak")
-        if counter == 3 and len(newmap) > 3 and newmap[-1] != "miniboss" and newmap[-2] != "miniboss":
+            newmap.append("weak.jpg")
+        if counter == 3 and len(newmap) > 3 and newmap[-1] != "miniboss.jpg" and newmap[-2] != "miniboss.jpg":
             # Adds a miniboss encounter
-            newmap.append("miniboss")
-        if (counter == 4 or counter == 5) and len(newmap) > 2 and newmap[-1] != "rest":
+            newmap.append("miniboss.jpg")
+        if (counter == 4 or counter == 5) and len(newmap) > 2 and newmap[-1] != "bonfire.jpg":
             # Adds a rest encounter
-            newmap.append("rest")
-        if (counter == 6 and len(newmap) > 2 and newmap[-1] != "random"):
+            newmap.append("bonfire.jpg")
+        if (counter == 6 and len(newmap) > 2 and newmap[-1] != "random.png"):
             # Adds a random encounter
-            newmap.append("random")
+            newmap.append("random.png")
     # Adds a boss fight at the end of the map
-    newmap.append("boss")
+    newmap.append("boss.jpg")
     print(newmap)
     # Returns the made map
     return newmap
 
-  def showmap(self):
-      monsters = []
-      for i in range(0, len(monsters)):
-          creature = Image.open(monsters[i].image)
-          creature = creature.resize((40, 30), Image.ANTIALIAS)
-          monImg = ImageTk.PhotoImage(creature)
-          the_monster = Label(self, image = monImg)
-          the_monster.image = monImg
-          the_monster.pack()
-          the_monster.place(x = (100 * (i+1)), y = 200)
+  def showmap(self,givenmap):
+      for i in range(0, len(givenmap)):
+          encounter = Image.open(givenmap[i])
+          encounter = encounter.resize((40, 30), Image.ANTIALIAS)
+          encounterImg = ImageTk.PhotoImage(encounter)
+          my_encounter = Label(self, image = encounterImg)
+          my_encounter.image = encounterImg
+          my_encounter.pack()
+          my_encounter.place(x = (100 * (i+1)), y = 200)
 
 
 
@@ -469,6 +470,7 @@ class Game(Frame):
   def map1screen(self):
     self.clearscreen()
     self.selectedmap = self.map1
+    self.showmap(self.map1)
     # Makes a select map button for when you select a map
     # This will start your adventure
     selectmapButton = Button(self, text = "Create Character", command = self.createPlayer)
@@ -482,6 +484,7 @@ class Game(Frame):
   def map2screen(self):
     self.clearscreen()
     self.selectedmap = self.map2
+    self.showmap(self.map2)
     # Makes a select map button for when you select a map
     # This will start your adventure
     selectmapButton = Button(self, text = "Create Character", command = self.createPlayer)
@@ -495,6 +498,7 @@ class Game(Frame):
   def map3screen(self):
     self.clearscreen()
     self.selectedmap = self.map3
+    self.showmap(self.map3)
     # Makes a select map button for when you select a map
     # This will start your adventure
     selectmapButton = Button(self, text = "Create Character", command = self.createPlayer)
@@ -535,15 +539,15 @@ class Game(Frame):
     # Increments it up
     self.mapposition += 1
     # Checks what encounter to run then runs it
-    if self.selectedmap[position] == "weak":
+    if self.selectedmap[position] == "weak.jpg":
       self.weakencounter(player)
-    if self.selectedmap[position] == "miniboss":
+    if self.selectedmap[position] == "miniboss.jpg":
       self.minibossencounter(player)
-    if self.selectedmap[position] == "boss":
+    if self.selectedmap[position] == "boss.jpg":
       self.bossencounter(player)
-    if self.selectedmap[position] == "rest":
+    if self.selectedmap[position] == "bonfire.jpg":
       self.restencounter(player)
-    if self.selectedmap[position] == "random":
+    if self.selectedmap[position] == "random.png":
       self.weakchestencounter(player)
     
     
