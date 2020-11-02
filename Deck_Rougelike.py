@@ -330,7 +330,7 @@ class Game(Frame):
 
   #Creation of init_window
   def init_gamewindow(self):
-
+    
     # changing the title of our master widget      
     self.master.title("GUI")
 
@@ -520,10 +520,31 @@ class Game(Frame):
 
   # Rest encounter function
   def restencounter(self,player):
+    # Sets the background
+    background = Image.open("bonfire.jpg")
+    background = background.resize((600,700), Image.ANTIALIAS)
+    backgroundImg =  ImageTk.PhotoImage(background)
+    my_background = Label(self,image=backgroundImg)
+    my_background.image = backgroundImg
+    my_background.pack()
+    my_background.place(x = 0, y = 0)
+
+    # Outputs a message to the player
+    firepitmessage = Text(self, height=5, width=50)
+    firepitmessage.pack()
+    firepitmessage.insert(tk.END, "You come upon a burning fire pit. You feel\nat peace and safe near the fire.\nWeirdly there are provisions of food and\nwater for you around the fire.")
+    firepitmessage.place(x = 650,y = 10)
+    firepitmessage.config(font = (Game.font,Game.buttonsize))
+
+    # Makes a walk away button 
+    restButton = Button(self,text = "Rest", command = lambda: self.postencounter(player))
+    restButton.pack()
+    restButton.config(font = (Game.font,Game.buttonsize))
+    restButton.place(x = 650, y = 650)
+    
     # Heals the player
     player.heal(20)
-    # Then continues onto the map 
-    self.postencounter(player)
+    
 
   # Weak chest encounter
   def weakchestencounter(self,player):
