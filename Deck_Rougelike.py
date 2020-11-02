@@ -18,6 +18,8 @@ class Card:
     self.debuff = []
     # Sets the card's buffs
     self.buff = []
+    # Sets how many stacks of buffs/debuffs the card will give
+    self.stacks = None
     # Sets the card's energy use
     self.energyuse = None
     
@@ -32,6 +34,7 @@ class FireBall(Card):
     self.guard = 0
     self.debuff = []
     self.buff = []
+    self.stacks = 0
     self.energyuse = 1
 
 class Guard(Card):
@@ -42,6 +45,7 @@ class Guard(Card):
     self.guard = 5
     self.debuff = []
     self.buff = []
+    self.stacks = 0
     self.energyuse = 1
 
 class Adrenaline(Card):
@@ -51,8 +55,11 @@ class Adrenaline(Card):
     self.damage = 5
     self.guard = 0
     self.debuff = []
-    self.buff = ["resistance","resistance","resistance"]
+    self.buff = ["resistance"]
+    self.stacks = 3
     self.energyuse = 1
+
+  
 
 class Lightning(Card):
   def __init__(self):
@@ -62,6 +69,7 @@ class Lightning(Card):
     self.guard = 0
     self.debuff = []
     self.buff = []
+    self.stacks = 0
     self.energyuse = 1
 
 class IceSpear(Card):
@@ -72,6 +80,7 @@ class IceSpear(Card):
     self.guard = 0
     self.debuff = []
     self.buff = []
+    self.stacks = 0
     self.energyuse = 1
 
 class ConjureBear(Card):
@@ -82,6 +91,7 @@ class ConjureBear(Card):
     self.guard = 0
     self.debuff = []
     self.buff = []
+    self.stacks = 0
     self.energyuse = 2
 
 class MarksWomn(Card):
@@ -92,6 +102,7 @@ class MarksWomn(Card):
     self.guard = 0
     self.debuff = []
     self.buff = []
+    self.stacks = 0
     self.energy = 1
 
 class Legionares(Card):
@@ -102,6 +113,7 @@ class Legionares(Card):
     self.guard = 10
     self.debuff = []
     self.buff = []
+    self.stacks = 0
     self.energy = 2
 
 class VineWip(Card):
@@ -112,6 +124,7 @@ class VineWip(Card):
     self.guard = 0
     self.debuff = []
     self.buff = []
+    self.stacks = 0
     self.energy = 1
 
 class SwordFury(Card):
@@ -122,6 +135,7 @@ class SwordFury(Card):
     self.guard = 0
     self.debuff = []
     self.buff = []
+    self.stacks = 0
     self.energy = 1
 
 
@@ -134,14 +148,16 @@ class SwordFury(Card):
 
 
 ##############################################################################
-## ARTIFACT SECTION
+## ARTIFACT SECTION - These will be rewarded once at the begining of the game and once after every boss fight
 
 class Artifact():
   def __init__(self):
     self.name = None
     self.image = None
+    self.uses = None
 
-  #def ability(self,user):
+  def ability(self,user):
+    pass
     
 
 
@@ -149,7 +165,14 @@ class BalanceBraclet(Artifact):
   def __init__(self):
     self.name = "Balance Braclet"
     self.image = "slime.jpg"
-  
+    self.uses = 0
+
+  def ability(self,user):
+    if self.uses == 0:
+      user.maxenergy += 1
+      self.uses += 1
+    else:
+      pass
     
 
 ##############################################################################
@@ -186,6 +209,32 @@ class Creature():
 
 #########################################################################################
 ## STATUS FUNCTIONS
+
+    def adddebuff(self,card):
+        debufflist = ["poison"]
+        for i in debufflist:
+            if card.debuff == i:
+                while self.status.count(i) < (card.stack):
+                    self.status.append(i)
+            else:
+                pass
+
+    def addbuff(self,card):
+        bufflist = ["resistance"]
+
+        for i in bufflist:
+            if card.buff.count(i) == 1:
+                while self.status.count(i) < (card.stacks):
+                    self.status.append(i)
+            else:
+                pass
+        
+
+
+
+
+
+      
     # Function that will apply user's buffs to the card use
     def applybuff(self,target):
       # Given list off all the different status effects
@@ -226,8 +275,8 @@ class Creature():
     def carduse(self,card,target):
       addeddamage = 0
       # Apply Buffs
-      target.debuff = target.status + card.debuff
-      self.status = self.status + card.buff
+      target.adddebuff(card)
+      self.addbuff(card)
 
       # Check buffs
       self.applybuff(target)
@@ -255,6 +304,7 @@ class Creature():
         target.health = 0
       # Subtract energy
       self.energy = self.energy - card.energyuse
+      print(self.status)
 
 
 ################################################################################
@@ -435,7 +485,7 @@ class Game(Frame):
           my_encounter = Label(self, image = encounterImg)
           my_encounter.image = encounterImg
           my_encounter.pack()
-          my_encounter.place(x = (100 * (i+1)), y = 200)
+          my_encounter.place(x = (50 * (i+1)), y = 200)
 
 
 
