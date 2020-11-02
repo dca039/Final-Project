@@ -75,6 +75,31 @@ class IceSpear(Card):
     self.energyuse = 1
 
 
+
+
+
+
+
+
+
+##############################################################################
+## ARTIFACT SECTION
+
+class Artifact():
+  def __init__(self):
+    self.name = None
+    self.image = None
+
+  def ability(self,user):
+    
+
+
+class BalanceBraclet(Artifact):
+  self.name = "Balance Braclet"
+  self.image = "slime.jpg"
+  
+    
+
 ##############################################################################
 ## CREATURE SECTION
 class Creature():
@@ -115,6 +140,7 @@ class Creature():
       # List of status effects: resistance
       if self.status.count("resistance") > 0:
         self.resistance()
+      
       else:
          pass
 
@@ -126,7 +152,17 @@ class Creature():
       
 
 
+    # Function that applies status effects at the end of turns
+    def endturneffects(self):
+      # Given list off all the different status effects
+      # List of status effects: poison
+      if self.status.count("poison") > 0:
+        self.poison()
+      else:
+        pass
 
+    def poison(self):
+      self.health -= 1
 
 
 
@@ -727,7 +763,8 @@ class Game(Frame):
     player.guard = 0
     # Increments the turn number
     self.turn += 1
-    
+    player.endturneffects()
+    monster.endturneffects()
     # status effects are removed
     self.removestats(player)
     self.removestats(monster)
