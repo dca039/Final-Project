@@ -74,6 +74,57 @@ class IceSpear(Card):
     self.buff = []
     self.energyuse = 1
 
+class ConjureBear(Card):
+  def __init__(self):
+    self.name = "Conjure Bear"
+    self.image = "bear.jpg"
+    self.damage = 10
+    self.guard = 0
+    self.debuff = []
+    self.buff = []
+    self.energyuse = 2
+
+class MarksWomn(Card):
+  def __init__(self):
+    self.name = "Markswoman"
+    self.image = "markswoman.jpg"
+    self.damage = 5
+    self.guard = 0
+    self.debuff = []
+    self.buff = []
+    self.energy = 1
+
+class Legionares(Card):
+  def __init__(self):
+    self.name = "Legionares"
+    self.image = "legionare.jpg"
+    self.damage = 0
+    self.guard = 10
+    self.debuff = []
+    self.buff = []
+    self.energy = 2
+
+class VineWip(Card):
+  def __init__(self):
+    self.name = "Vine Wip"
+    self.image = "vine.jpg"
+    self.damage = 1
+    self.guard = 0
+    self.debuff = []
+    self.buff = []
+    self.energy = 1
+
+class SwordFury(Card):
+  def __init__(self):
+    self.name = "Sword Fury"
+    self.image = "sword.jpg"
+    self.damage = 5
+    self.guard = 0
+    self.debuff = []
+    self.buff = []
+    self.energy = 1
+
+
 
 
 
@@ -373,6 +424,18 @@ class Game(Frame):
     print(newmap)
     # Returns the made map
     return newmap
+
+  def showmap(self):
+      monsters = []
+      for i in range(0, len(monsters)):
+          creature = Image.open(monsters[i].image)
+          creature = creature.resize((40, 30), Image.ANTIALIAS)
+          monImg = ImageTk.PhotoImage(creature)
+          the_monster = Label(self, image = monImg)
+          the_monster.image = monImg
+          the_monster.pack()
+          the_monster.place(x = (100 * (i+1)), y = 200)
+
 
 
 
