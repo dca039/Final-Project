@@ -103,40 +103,228 @@ class MarksWomn(Card):
     self.debuff = []
     self.buff = []
     self.stacks = 0
-    self.energy = 1
+    self.energyuse = 1
 
 class Legionares(Card):
   def __init__(self):
-    self.name = "Legionares"
+    self.name = "Legionare"
     self.image = "legionare.jpg"
     self.damage = 0
     self.guard = 10
     self.debuff = []
     self.buff = []
     self.stacks = 0
-    self.energy = 2
+    self.energyuse = 2
 
-class VineWip(Card):
+class VineWhip(Card):
   def __init__(self):
-    self.name = "Vine Wip"
+    self.name = "Vine Whip"
     self.image = "vine.jpg"
     self.damage = 1
     self.guard = 0
     self.debuff = []
     self.buff = []
+    self.energy = 0
     self.stacks = 0
-    self.energy = 1
+    self.energyuse = 1
 
 class SwordFury(Card):
   def __init__(self):
     self.name = "Sword Fury"
     self.image = "sword.jpg"
-    self.damage = 5
+    self.damage = 10
     self.guard = 0
     self.debuff = []
     self.buff = []
+    self.energyuse = 2
+
+class PoisonArrow(Card):
+  def __init__(self):
+    self.name = "Poison Arrow"
+    self.image = "poisonarrow.jpg"
+    self.damage = 5
+    self.guard = 0
+    self.debuff = ["poison"]
+    self.buff = []
+    self.stacks = 3
     self.stacks = 0
-    self.energy = 1
+    self.energyuse = 1
+
+class HealthPotion(Card):
+  def __init__(self):
+    self.name = "Health Potion"
+    self.image = "healthpotion.jpg"
+    self.damage = 0
+    self.guard = 0
+    self.debuff = []
+    self.buff = ["heal"]
+    self.stacks = 1
+    self.energyuse = 1
+
+class Avalanche(Card):
+  def __init__(self):
+    self.name = "Avalanche"
+    self.image = "avalanche.jpg"
+    self.damage = 10
+    self.guard = 0
+    self.debuff = []
+    self.buff = []
+    self.stacks = []
+    self.energyuse = 2
+
+class LavaSmash(Card):
+  def __init__(self):
+    self.name = "Lava Smash"
+    self.image = "lava.jpg"
+    self.damage = 20
+    self.guard = 0
+    self.debuff = []
+    self.buff = []
+    self.stacks = []
+    self.energyuse = 3
+
+class KnifeThrow(Card):
+  def __init__(self):
+    self.name = "Knife Throw"
+    self.image = "knife.jpg"
+    self.damage = 1
+    self.guard = 0
+    self.debuff = []
+    self.buff = []
+    self.stacks = []
+    self.energyuse = 1
+
+#################### Creature Cards ###############################
+
+
+class Bite(Card):
+    def __init__(self):
+        self.name = "Bite"
+        self.damage = 5
+        self.guard = 0
+        self.debuff = []
+        self.buff = []
+        self.stacks = []
+        self.energy = 1
+
+class Scratch(Card):
+    def __init__(self):
+        self.name = "Scratch"
+        self.damage = 3
+        self.guard = 0
+        self.debuff = ['bleeding']
+        self.stacks = 2
+        self.energyuse = 1
+
+class WolfPack(Card):
+    def __init__(self):
+        self.name = "Wolf Pack"
+        self.damage = 0
+        self.guard = 3
+        self.debuff = 0
+        self.buff = []
+        self.stacks = 3
+        self.energyuse = 1
+
+class SlimeWave(Card):
+    def __init__(self):
+        self.name = "Slime Wave"
+        self.damage = 5
+        self.guard = 0
+        self.debuff = []
+        self.buff = []
+        self.stacks = []
+        self.energy = 1
+
+class Slippery(Card):
+    def __init__(self):
+        self.name = "Slip"
+        self.damage = 1
+        self.guard = 0
+        self.debuff = []
+        self.buff = []
+        self.stacks = []
+        self.energyuse = 1
+
+class SlimeThrow():
+    def __init__(self):
+        self.name = "Slime Throw"
+        self.damage = 3
+        self.guard = 0
+        self.debuff = []
+        self.buff = []
+        self.stacks = []
+        self.energyuse = 1
+
+class Slimey(Card):
+    def __init__(self):
+        self.name = "Slimey"
+        self.damage = 0
+        self.guard = 0
+        self.debuff = []
+        self.buff = ["restiance"]
+        self.stacks = 1
+        self.energyuse = 1
+
+class ClubSmash(Card):
+    def __init__(self):
+        self.name = "Club Smash"
+        self.damage = 10
+        self.guard = 0
+        self.debuff = []
+        self.buff = []
+        self.stacks = []
+        self.energyuse = 2
+
+class HardenedSkin(Card):
+    def __init__(self):
+        self.name = "Hardened Skin"
+        self.damage = 0
+        self.guard = 0
+        self.debuff = []
+        self.buff = ["resistance"]
+        self.stacks = 3
+        self.energyuse =1
+
+class BodySlam(Card):
+    def __init__(self):
+        self.name = "Body Slam"
+        self.damage = 5
+        self.guard = 0
+        self.debuff = []
+        self.buff = []
+        self.stacks = []
+        self.energyuse = 1
+
+class DeadFlesh(Card):
+    def __init__(self):
+        self.name = "Dead Flesh"
+        self.damage = 3
+        self.guard = 0
+        self.debuff = ["poison"]
+        self.buff = ["resistance"]
+        self.stacks = 2
+        self.energyuse = 2
+
+class ZombieHoard(Card):
+    def __init__(self):
+        self.name = "Zombie Hoard"
+        self.damage = 0
+        self.guard = 3
+        self.debuff = []
+        self.buff = []
+        self.stacks = []
+        self.energyuse = 2
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -211,7 +399,7 @@ class Creature():
 ## STATUS FUNCTIONS
 
     def adddebuff(self,card):
-        debufflist = ["poison"]
+        debufflist = ["poison", "bleeding"]
         for i in debufflist:
             if card.debuff == i:
                 while self.status.count(i) < (card.stack):
@@ -241,7 +429,8 @@ class Creature():
       # List of status effects: resistance
       if self.status.count("resistance") > 0:
         self.resistance()
-      
+      if self.status.count("heal") > 0:
+        self.heal()
       else:
          pass
 
@@ -259,10 +448,16 @@ class Creature():
       # List of status effects: poison
       if self.status.count("poison") > 0:
         self.poison()
+      if self.status.count("bleeding") > 0:
+        self.bleeding()
+
       else:
         pass
 
     def poison(self):
+      self.health -= 1
+
+    def bleeding(self):
       self.health -= 1
 
 
@@ -345,42 +540,60 @@ class Player(Creature):
 class Slime(Creature):
     def __init__(self):
         self.name = "Slime"
+        self.image = "Slime.jpg"
         self.maxhealth = 20
         self.health = 20
         self.guard = 0
         self.status = []
-        self.movelist = [FireBall(),Guard()]
+        self.movelist = [SlimeWave(), SlimeThrow(), Slippery(), Slimey()]
         self.energy = 999
+
 
 class Orc(Creature):
     def __init__(self):
         self.name = "Orc"
+        self.image = "orc.jpg"
         self.maxhealth = 20
         self.health = 20
         self.guard = 0
         self.status = []
-        self.movelist = [FireBall(),Guard()]
+        self.movelist = [ClubSmash(), HardenedSkin(), BodySlam()]
         self.energy = 999
   
 class Wolf(Creature):
     def __init__(self):
         self.name = "Wolf"
+        self.image = "wolf.jpg"
         self.maxhealth = 20
         self.health = 20
         self.guard = 0
         self.status = []
-        self.movelist = [FireBall(),Guard()]
+        self.movelist = [Bite(), Scratch(), WolfPack()]
         self.energy = 999
 
 class Zombie(Creature):
     def __init__(self):
         self.name = "Zombie"
+        self.image = "zombie.jpg"
         self.maxhealth = 20
         self.health = 20
         self.guard = 0
         self.status = []
-        self.movelist = [FireBall(),Guard()]
+        self.movelist = [Bite(), DeadFlesh(), ZombieHoard()]
         self.energy = 999
+
+class Witch(Creature):
+    def __init__(self):
+        self.name = "Witch"
+        self.image = "witch.jpg"
+        self.maxhealth = 20
+        self.health = 20
+        self.guard = 0
+        self.status = []
+        self.movelist = [FireBall(), Lightning(), HealthPotion()]
+        self.energy = 999
+
+
         
 
     
