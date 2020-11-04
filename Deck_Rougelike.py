@@ -2,6 +2,7 @@ from random import randint
 from tkinter import *
 import tkinter as tk
 from PIL import ImageTk,Image
+import Pmw
 
 ##############################################################################
 ## CARD SECTION
@@ -36,10 +37,11 @@ class FireBall(Card):
     self.buff = []
     self.stacks = 0
     self.energyuse = 1
+    self.balloontip = "{}\nDamage = {}\nUnleash a searing fireball.".format(self.name,self.damage)
 
 class Guard(Card):
   def __init__(self):
-    self.name = "Guard"
+    self.name = "Sheild"
     self.image = "guard.png"
     self.damage = 0
     self.guard = 5
@@ -47,6 +49,7 @@ class Guard(Card):
     self.buff = []
     self.stacks = 0
     self.energyuse = 1
+    self.balloontip = "{}\nGuard = {}\nReady yourself with a sheild.".format(self.name,self.guard)
 
 class Adrenaline(Card):
   def __init__(self):
@@ -58,6 +61,7 @@ class Adrenaline(Card):
     self.buff = ["resistance"]
     self.stacks = 3
     self.energyuse = 1
+    self.balloontip = "{}\nBuff = {}\nA rush of adrenaline gives you \nmore guard the more you use energy.".format(self.name,self.buff)
 
   
 
@@ -71,6 +75,7 @@ class Lightning(Card):
     self.buff = []
     self.stacks = 0
     self.energyuse = 1
+    self.balloontip = "{}\nDamage = {}\nConjure a bolt of lightning from your fingers.".format(self.name,self.damage)
 
 class IceSpear(Card):
   def __init__(self):
@@ -950,6 +955,8 @@ class Game(Frame):
       my_card.image = cardImg
       my_card.pack()
       my_card.place(x = (100*(i+1)), y = 400)
+      cardtip = Pmw.Balloon(self)
+      cardtip.bind(my_card,player.hand[i].balloontip)
 
     # End turn button that will end the player's turn
     endturnbutton = Button(self, text = "End Turn", command = lambda: self.endturn(player,monster))
@@ -1204,6 +1211,7 @@ HEIGHT = 600
 window = Tk()
 window.title("Adventure Guild")
 window.geometry("{}x{}".format(WIDTH,HEIGHT))
+Pmw.initialise(window)
 
 # create the GUI as a Tkinter canvas inside the window
 g = Game(window)
