@@ -65,7 +65,7 @@ class Lightning(Card):
   def __init__(self):
     self.name = "Lightning"
     self.image = "lightning.jpg"
-    self.damage = 1
+    self.damage = 4
     self.guard = 0
     self.debuff = []
     self.buff = []
@@ -436,6 +436,14 @@ class Game(Frame):
     # clear screen
     self.clearscreen()
     #Make the Title Label
+    background = Image.open("Slime.jpg")
+    background = background.resize((800,600), Image.ANTIALIAS)
+    backgroundImg =  ImageTk.PhotoImage(background)
+    my_background = Label(self,image=backgroundImg)
+    my_background.image = backgroundImg
+    my_background.pack()
+
+    
     start = Label(self, text = "Adventures' Guild")
     start.pack()
     # Place the Label
@@ -477,7 +485,7 @@ class Game(Frame):
     # Returns the made map
     return newmap
 
-  def showmap(self,givenmap):
+  def showmap(self,givenmap,row):
       for i in range(0, len(givenmap)):
           encounter = Image.open(givenmap[i])
           encounter = encounter.resize((40, 30), Image.ANTIALIAS)
@@ -485,7 +493,7 @@ class Game(Frame):
           my_encounter = Label(self, image = encounterImg)
           my_encounter.image = encounterImg
           my_encounter.pack()
-          my_encounter.place(x = (50 * (i+1)), y = 200)
+          my_encounter.place(x = (50 * (i+1)), y = row)
 
 
 
@@ -501,68 +509,38 @@ class Game(Frame):
     # Clears the screen
     self.clearscreen()
     # Makes the show map buttons that take you to their respective map screen
-    showmap1Button = Button(self, text="Show Map 1", command = self.map1screen)
-    showmap1Button.place(x = column , y = row1)
-    showmap1Button.config(font=(Game.font,Game.buttonsize))
-    showmap2Button = Button(self, text="Show Map 2", command = self.map2screen)
-    showmap2Button.place(x = column , y = row2)
-    showmap2Button.config(font=(Game.font,Game.buttonsize))
-    showmap3Button = Button(self, text="Show Map 3", command = self.map3screen)
-    showmap3Button.place(x = column , y = row3)
-    showmap3Button.config(font=(Game.font,Game.buttonsize))
+    selectmap1Button = Button(self, text="Select Map 1")
+    selectmap1Button.place(x = column , y = row1 + 30)
+    selectmap1Button.config(font=(Game.font,Game.buttonsize))
+    selectmap1Button['command'] = lambda mapid = self.map1: self.createPlayer(mapid)
+    self.showmap(self.map1,row1)
+    selectmap2Button = Button(self, text="Select Map 2")
+    selectmap2Button.place(x = column , y = row2 +30)
+    selectmap2Button.config(font=(Game.font,Game.buttonsize))
+    selectmap2Button['command'] = lambda mapid = self.map2: self.createPlayer(mapid)
+    self.showmap(self.map2,row2)
+    selectmap3Button = Button(self, text="Select Map 3")
+    selectmap3Button.place(x = column , y = row3 + 30)
+    selectmap3Button.config(font=(Game.font,Game.buttonsize))
+    selectmap3Button['command'] = lambda mapid = self.map2: self.createPlayer(mapid)
+    self.showmap(self.map3,row3)
+
+    #Key
+    
     # Makes a back button that takes you back to the start screen
     backButton = Button(self, text = "Back", command = self.startscreen)
     backButton.place(x = 330, y = row4)
     backButton.config(font=(Game.font,Game.buttonsize))
 
 
-  # Shows the selected map
-  def map1screen(self):
+  
+
+
+
+
+  def createPlayer(self,chosemap):
     self.clearscreen()
-    self.selectedmap = self.map1
-    self.showmap(self.map1)
-    # Makes a select map button for when you select a map
-    # This will start your adventure
-    selectmapButton = Button(self, text = "Create Character", command = self.createPlayer)
-    selectmapButton.place(x = 210, y = 410)
-    selectmapButton.config(font=(Game.font,Game.buttonsize))
-    backButton = Button(self, text = "Back", command = self.selectmap)
-    backButton.place(x = 325, y = 500)
-    backButton.config(font=(Game.font,Game.buttonsize))
-    
-  # Shows the selected map
-  def map2screen(self):
-    self.clearscreen()
-    self.selectedmap = self.map2
-    self.showmap(self.map2)
-    # Makes a select map button for when you select a map
-    # This will start your adventure
-    selectmapButton = Button(self, text = "Create Character", command = self.createPlayer)
-    selectmapButton.place(x = 210, y = 410)
-    selectmapButton.config(font=(Game.font,Game.buttonsize))
-    backButton = Button(self, text = "Back", command = self.selectmap)
-    backButton.place(x = 325, y = 500)
-    backButton.config(font=(Game.font,Game.buttonsize))
-
-  # Shows the selected map
-  def map3screen(self):
-    self.clearscreen()
-    self.selectedmap = self.map3
-    self.showmap(self.map3)
-    # Makes a select map button for when you select a map
-    # This will start your adventure
-    selectmapButton = Button(self, text = "Create Character", command = self.createPlayer)
-    selectmapButton.place(x = 210, y = 410)
-    selectmapButton.config(font=(Game.font,Game.buttonsize))
-    backButton = Button(self, text = "Back", command = self.selectmap)
-    backButton.place(x = 325, y = 500)
-    backButton.config(font=(Game.font,Game.buttonsize))
-
-
-
-
-  def createPlayer(self):
-    self.clearscreen()
+    self.selectedmap = chosemap
     # Create the input that the player will use to make their name
     name = StringVar()
     playername = Entry(self, textvariable = name)
@@ -1007,8 +985,8 @@ class Game(Frame):
 
 
 ###############################################################################
-WIDTH = 1366
-HEIGHT = 768
+WIDTH = 800
+HEIGHT = 600
 
 window = Tk()
 window.title("Adventure Guild")
