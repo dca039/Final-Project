@@ -58,10 +58,10 @@ class Adrenaline(Card):
     self.damage = 5
     self.guard = 0
     self.debuff = []
-    self.buff = ["resistance"]
+    self.buff = ["Resistance"]
     self.stacks = 3
     self.energyuse = 1
-    self.balloontip = "{}\nBuff = {}\nA rush of adrenaline gives you \nmore guard the more you use energy.".format(self.name,self.buff)
+    self.balloontip = "{}\nBuff = {}\nA rush of adrenaline gives you \nmore guard the more you use energy.".format(self.name,self.buff[0])
 
   
 
@@ -210,7 +210,7 @@ class Bite(Card):
         self.debuff = []
         self.buff = []
         self.stacks = []
-        self.energy = 1
+        self.energyuse = 1
 
 class Scratch(Card):
     def __init__(self):
@@ -239,7 +239,7 @@ class SlimeWave(Card):
         self.debuff = []
         self.buff = []
         self.stacks = []
-        self.energy = 1
+        self.energyuse = 1
 
 class Slippery(Card):
     def __init__(self):
@@ -287,7 +287,7 @@ class HardenedSkin(Card):
         self.damage = 0
         self.guard = 0
         self.debuff = []
-        self.buff = ["resistance"]
+        self.buff = ["Resistance"]
         self.stacks = 3
         self.energyuse =1
 
@@ -307,7 +307,7 @@ class DeadFlesh(Card):
         self.damage = 3
         self.guard = 0
         self.debuff = ["poison"]
-        self.buff = ["resistance"]
+        self.buff = ["Resistance"]
         self.stacks = 2
         self.energyuse = 2
 
@@ -413,7 +413,7 @@ class Creature():
                 pass
 
     def addbuff(self,card):
-        bufflist = ["resistance"]
+        bufflist = ["Resistance"]
 
         for i in bufflist:
             if card.buff.count(i) == 1:
@@ -432,7 +432,7 @@ class Creature():
     def applybuff(self,target):
       # Given list off all the different status effects
       # List of status effects: resistance
-      if self.status.count("resistance") > 0:
+      if self.status.count("Resistance") > 0:
         self.resistance()
       if self.status.count("heal") > 0:
         self.heal()
@@ -632,6 +632,7 @@ class Game(Frame):
     self.map1 = self.mapmaker()
     self.map2 = self.mapmaker()
     self.map3 = self.mapmaker()
+    self.testmap = ["weak.jpg","miniboss.jpg","bonfire.jpg","random.png","boss.jpg"]
 
   #Creation of init_window
   def init_gamewindow(self):
@@ -713,16 +714,31 @@ class Game(Frame):
           my_encounter.pack()
           my_encounter.place(x = (50 * (i+1)), y = row)
 
+  def showkey(self,givenmap,row):
+      key = ["Weak Encounter","MiniBoss Encounter","Rest Encounter","Random Encounter","Boss Encounter"]
+      for i in range(0, len(givenmap)):
+          encounter = Image.open(givenmap[i])
+          encounter = encounter.resize((40, 30), Image.ANTIALIAS)
+          encounterImg = ImageTk.PhotoImage(encounter)
+          my_encounter = Label(self, image = encounterImg)
+          my_encounter.image = encounterImg
+          my_encounter.pack()
+          my_encounter.place(x = (50), y = row + (35 * (i + 1)))
+          keyLabel = Label(self,text = key[i])
+          keyLabel.config(font=(Game.font,10))
+          keyLabel.place(x = (100), y = (row + 5) + (35 * (i + 1)))
+          
+
 
 
 
   def selectmap(self):
     # Set variables for the columns and rows for organization
     column = 280
-    row1 = 100
-    row2 = 250
-    row3 = 400
-    row4 = 500
+    row1 = 50
+    row2 = 170
+    row3 = 290
+    row4 = 410
     
     # Clears the screen
     self.clearscreen()
@@ -743,7 +759,13 @@ class Game(Frame):
     selectmap3Button['command'] = lambda mapid = self.map2: self.createPlayer(mapid)
     self.showmap(self.map3,row3)
 
+ 
+    testmapButton = Button(self, text="Test Map")
+    testmapButton.place(x = 650 , y = 5)
+    testmapButton.config(font=(Game.font, 10))
+    testmapButton['command'] = lambda mapid = self.testmap: self.createPlayer(mapid)
     #Key
+    self.showkey(self.testmap,350)
     
     # Makes a back button that takes you back to the start screen
     backButton = Button(self, text = "Back", command = self.startscreen)
@@ -758,7 +780,7 @@ class Game(Frame):
 
   def createPlayer(self,chosemap):
     self.clearscreen()
-    self.selectedmap = chosemap
+    self.selectedmap = self.testmap
     # Create the input that the player will use to make their name
     name = StringVar()
     playername = Entry(self, textvariable = name)
@@ -1107,7 +1129,7 @@ class Game(Frame):
   # Removes statuses function
   def removestats(self,creature):
     # Given list off all the different status effects
-    ailments = ["resistance"]
+    ailments = ["Resistance"]
     for i in range(0,len(ailments)):
       # If the player has at least one of these effects subtract one from the list
       if creature.status.count(ailments[i]) > 0:
