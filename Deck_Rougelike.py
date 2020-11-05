@@ -515,6 +515,8 @@ class Player(Creature):
     def __init__(self,name):
         # Sets the player's name
         self.name = name
+        # Sets the player's image
+        self.image = "Hunter.jpg"
         # Sets the player's max health
         self.maxhealth = 50
         # Sets the player's health
@@ -619,7 +621,9 @@ class Game(Frame):
   # Sets the Game's font
   font = "Courier"
   # Sets the Game's button size
-  buttonsize = 20 
+  buttonsizelarge = 20
+  buttonsizemedium = 14
+  buttonsizesmall = 5
 
   def __init__(self, master=None):
     Frame.__init__(self, master)
@@ -675,7 +679,7 @@ class Game(Frame):
     # placing the button on my window
     startButton.place(x=325, y=400)
     # Set the font and font size
-    startButton.config(font=(Game.font,Game.buttonsize))
+    startButton.config(font=(Game.font,Game.buttonsizelarge))
 
   # Function that makes the maps randomly
   def mapmaker(self):
@@ -745,17 +749,17 @@ class Game(Frame):
     # Makes the show map buttons that take you to their respective map screen
     selectmap1Button = Button(self, text="Select Map 1")
     selectmap1Button.place(x = column , y = row1 + 30)
-    selectmap1Button.config(font=(Game.font,Game.buttonsize))
+    selectmap1Button.config(font=(Game.font,Game.buttonsizelarge))
     selectmap1Button['command'] = lambda mapid = self.map1: self.createPlayer(mapid)
     self.showmap(self.map1,row1)
     selectmap2Button = Button(self, text="Select Map 2")
     selectmap2Button.place(x = column , y = row2 +30)
-    selectmap2Button.config(font=(Game.font,Game.buttonsize))
+    selectmap2Button.config(font=(Game.font,Game.buttonsizelarge))
     selectmap2Button['command'] = lambda mapid = self.map2: self.createPlayer(mapid)
     self.showmap(self.map2,row2)
     selectmap3Button = Button(self, text="Select Map 3")
     selectmap3Button.place(x = column , y = row3 + 30)
-    selectmap3Button.config(font=(Game.font,Game.buttonsize))
+    selectmap3Button.config(font=(Game.font,Game.buttonsizelarge))
     selectmap3Button['command'] = lambda mapid = self.map2: self.createPlayer(mapid)
     self.showmap(self.map3,row3)
 
@@ -770,7 +774,7 @@ class Game(Frame):
     # Makes a back button that takes you back to the start screen
     backButton = Button(self, text = "Back", command = self.startscreen)
     backButton.place(x = 330, y = row4)
-    backButton.config(font=(Game.font,Game.buttonsize))
+    backButton.config(font=(Game.font,Game.buttonsizelarge))
 
 
   
@@ -786,13 +790,13 @@ class Game(Frame):
     playername = Entry(self, textvariable = name)
     playername.pack()
     playername.place(x = 250, y = 300)
-    playername.config(font=(Game.font,Game.buttonsize))
+    playername.config(font=(Game.font,Game.buttonsizelarge))
     name.set("Player")
  
     # This will start your adventure
     startadvButton = Button(self, text = "Start Adventure", command =lambda: self.postcreatePlayer(name.get()))
     startadvButton.place(x = 150, y = 400)
-    startadvButton.config(font=(Game.font,Game.buttonsize))
+    startadvButton.config(font=(Game.font,Game.buttonsizelarge))
 
 
   def postcreatePlayer(self,name):
@@ -842,12 +846,12 @@ class Game(Frame):
     firepitmessage.pack()
     firepitmessage.insert(tk.END, "You come upon a burning fire pit. You feel\nat peace and safe near the fire.\nWeirdly there are provisions of food and\nwater for you around the fire.")
     firepitmessage.place(x = 650,y = 10)
-    firepitmessage.config(font = (Game.font,Game.buttonsize))
+    firepitmessage.config(font = (Game.font,Game.buttonsizelarge))
 
     # Makes a walk away button 
     restButton = Button(self,text = "Rest", command = lambda: self.postencounter(player))
     restButton.pack()
-    restButton.config(font = (Game.font,Game.buttonsize))
+    restButton.config(font = (Game.font,Game.buttonsizelarge))
     restButton.place(x = 650, y = 650)
     
     # Heals the player
@@ -872,18 +876,18 @@ class Game(Frame):
     chestmessage.pack()
     chestmessage.insert(tk.END, "A chest apears in front of  you.\n A warning is written on the lid.\n Open at your own risk")
     chestmessage.place(x = 650,y = 10)
-    chestmessage.config(font = (Game.font,Game.buttonsize))
+    chestmessage.config(font = (Game.font,Game.buttonsizelarge))
 
     # Makes a open chest button with the odds of the player succeding
     openButton = Button(self,text = "Open the chest. 70% chance of success", command = lambda: self.openweakchest(player))
     openButton.pack()
-    openButton.config(font = (Game.font,Game.buttonsize))
+    openButton.config(font = (Game.font,Game.buttonsizelarge))
     openButton.place(x = 650, y = 600)
 
     # Makes a walk away button 
     walkawayButton = Button(self,text = "Walk Away", command = lambda: self.postencounter(player))
     walkawayButton.pack()
-    walkawayButton.config(font = (Game.font,Game.buttonsize))
+    walkawayButton.config(font = (Game.font,Game.buttonsizelarge))
     walkawayButton.place(x = 650, y = 650)
     
   # Function if the player decides to open the chest
@@ -983,7 +987,7 @@ class Game(Frame):
     # End turn button that will end the player's turn
     endturnbutton = Button(self, text = "End Turn", command = lambda: self.endturn(player,monster))
     endturnbutton.place(x = 210, y = 510)
-    endturnbutton.config(font=(Game.font,Game.buttonsize))
+    endturnbutton.config(font=(Game.font,Game.buttonsizelarge))
 
     # Outputs the monster's attack on the player
     if self.turn > 0:
@@ -991,7 +995,7 @@ class Game(Frame):
       attackmessage = Label(self,text = "{} used {}".format(monster.name,self.monsterattack.name))
       attackmessage.pack()
       attackmessage.place(x = 650,y = 600)
-      attackmessage.config(font = (Game.font,Game.buttonsize))
+      attackmessage.config(font = (Game.font,Game.buttonsizelarge))
 
     # Once the moster dies the player is taken to the loot screen
     if monster.health < 1:
@@ -1030,50 +1034,69 @@ class Game(Frame):
     
   def battlefield(self, op, creature):
     PLAYER_X = 150
-    PLAYER_Y = 250
-    MONSTER_X = 910
+    PLAYER_Y = 200
+    PLAYER_INFO_X = 150
+    PLAYER_INFO_Y = 200
+    MONSTER_X = 510
     MONSTER_Y = 200
+    MONSTER_INFO_X = 510
+    MONSTER_INFO_Y =200
+    SPACING = 25
+    
+    
     # Sets the background
-    background = Image.open("cave.jpg")
-    background = background.resize((1200,500), Image.ANTIALIAS)
+    background = Image.open("cave.png")
+    background = background.resize((800,600), Image.ANTIALIAS)
     backgroundImg =  ImageTk.PhotoImage(background)
     my_background = Label(self,image=backgroundImg)
     my_background.image = backgroundImg
     my_background.pack()
 
     # Sets the player's image
-    player = Image.open("Hunter.jpg")
-    player = player.resize((80,40), Image.ANTIALIAS)
+    player = Image.open(op.image)
+    player = player.resize((80,100), Image.ANTIALIAS)
     playerImg =  ImageTk.PhotoImage(player)
     my_player = Label(self,image=playerImg)
     my_player.image = playerImg
     my_player.pack()
     my_player.place(x = PLAYER_X, y = PLAYER_Y)
+    # Shows player's name
+    playername = Label(self,text = "{}".format(op.name))
+    playername.place(x=PLAYER_INFO_X,y= (PLAYER_INFO_Y)-(4*SPACING))
+    playername.config(font = (Game.font,Game.buttonsizemedium))
     # Shows the player's health
-    playerhealth = Label(self,text = "{}/{}".format(op.health,op.maxhealth))
-    playerhealth.place(x=PLAYER_X,y= (PLAYER_Y + 40))
-    playerhealth.config(font = (Game.font,Game.buttonsize))
+    playerhealth = Label(self,text = "HP {}/{}".format(op.health,op.maxhealth))
+    playerhealth.place(x=PLAYER_INFO_X,y= (PLAYER_INFO_Y)-(3*SPACING))
+    playerhealth.config(font = (Game.font,Game.buttonsizemedium))
     # Shows the player's guard
     playerguard = Label(self,text = "{} Guard".format(op.guard))
-    playerguard.place(x=PLAYER_X,y= (PLAYER_Y + 80))
-    playerguard.config(font = (Game.font,Game.buttonsize))
+    playerguard.place(x=PLAYER_INFO_X,y= (PLAYER_INFO_Y)-(2*SPACING))
+    playerguard.config(font = (Game.font,Game.buttonsizemedium))
+    # Shows the player's guard
+    playerenergy = Label(self,text = "{}/{} Energy".format(op.energy,op.maxenergy))
+    playerenergy.place(x=PLAYER_INFO_X,y= (PLAYER_INFO_Y)-(1*SPACING))
+    playerenergy.config(font = (Game.font,Game.buttonsizemedium))
           
     # Shows the monster's image
-    monster = Image.open("Slime.jpg")
-    monster = monster.resize((80,40), Image.ANTIALIAS)
+    monster = Image.open(creature.image)
+    monster = monster.resize((80,100), Image.ANTIALIAS)
     monsterImg =  ImageTk.PhotoImage(monster)
     my_monster = Label(self,image=monsterImg)
     my_monster.image = monsterImg
     my_monster.pack()
     my_monster.place(x = MONSTER_X, y = MONSTER_Y)
+    # Shows player's name
+    playername = Label(self,text = "{}".format(creature.name))
+    playername.place(x=MONSTER_INFO_X,y= (MONSTER_INFO_Y)-(3*SPACING))
+    playername.config(font = (Game.font,Game.buttonsizemedium))
     # Shows the monster's health
-    monsterhealth = Label(self,text = "{}/{}".format(creature.health,creature.maxhealth))
-    monsterhealth.place(x= MONSTER_X,y= (MONSTER_Y + 40))
-    monsterhealth.config(font = (Game.font,Game.buttonsize))
+    monsterhealth = Label(self,text = "HP {}/{}".format(creature.health,creature.maxhealth))
+    monsterhealth.place(x= MONSTER_INFO_X,y= (MONSTER_INFO_Y)-(2*SPACING))
+    monsterhealth.config(font = (Game.font,Game.buttonsizemedium))
     # SHows the monster's guard
     monsterguard = Label(self,text = "{} Guard".format(creature.guard))
-    monsterguard.place(x=MONSTER_X,y= (MONSTER_Y + 80))
-    monsterguard.config(font = (Game.font,Game.buttonsize))
+    monsterguard.place(x=MONSTER_INFO_X,y= (MONSTER_INFO_Y)-(1*SPACING))
+    monsterguard.config(font = (Game.font,Game.buttonsizemedium))
 
 
   
@@ -1204,7 +1227,7 @@ class Game(Frame):
     # Button to continue onto the next encounter
     continueButton = Button(self, text = "Continue", command = lambda: self.processmap(player))
     continueButton.place(x = 325, y = 500)
-    continueButton.config(font=(Game.font,Game.buttonsize))
+    continueButton.config(font=(Game.font,Game.buttonsizelarge))
 
   # Death screen function
   def deathscreen(self):
@@ -1213,11 +1236,11 @@ class Game(Frame):
     deathmessage = Label(self,text = "YOU DIED!! GET BETTER!!")
     deathmessage.pack()
     deathmessage.place(x = 650,y = 600)
-    deathmessage.config(font = (Game.font,Game.buttonsize))
+    deathmessage.config(font = (Game.font,Game.buttonsizelarge))
     # Restart button
     continueButton = Button(self, text = "Restart", command = lambda: self.play())
     continueButton.place(x = 325, y = 500)
-    continueButton.config(font=(Game.font,Game.buttonsize))
+    continueButton.config(font=(Game.font,Game.buttonsizelarge))
     
 
   # play the game
