@@ -625,6 +625,7 @@ class Game(Frame):
   buttonsizemedium = 14
   buttonsizesmall = 5
 
+
   def __init__(self, master=None):
     Frame.__init__(self, master)
     self.master = master
@@ -718,10 +719,11 @@ class Game(Frame):
           my_encounter.pack()
           my_encounter.place(x = (50 * (i+1)), y = row)
 
-  def showkey(self,givenmap,row):
+  def showkey(self,row):
+      keyimages = ["weak.jpg","miniboss.jpg","bonfire.jpg","random.png","boss.jpg"]
       key = ["Weak Encounter","MiniBoss Encounter","Rest Encounter","Random Encounter","Boss Encounter"]
-      for i in range(0, len(givenmap)):
-          encounter = Image.open(givenmap[i])
+      for i in range(0, len(keyimages)):
+          encounter = Image.open(keyimages[i])
           encounter = encounter.resize((40, 30), Image.ANTIALIAS)
           encounterImg = ImageTk.PhotoImage(encounter)
           my_encounter = Label(self, image = encounterImg)
@@ -760,7 +762,7 @@ class Game(Frame):
     selectmap3Button = Button(self, text="Select Map 3")
     selectmap3Button.place(x = column , y = row3 + 30)
     selectmap3Button.config(font=(Game.font,Game.buttonsizelarge))
-    selectmap3Button['command'] = lambda mapid = self.map2: self.createPlayer(mapid)
+    selectmap3Button['command'] = lambda mapid = self.map3: self.createPlayer(mapid)
     self.showmap(self.map3,row3)
 
  
@@ -769,7 +771,7 @@ class Game(Frame):
     testmapButton.config(font=(Game.font, 10))
     testmapButton['command'] = lambda mapid = self.testmap: self.createPlayer(mapid)
     #Key
-    self.showkey(self.testmap,350)
+    self.showkey(350)
     
     # Makes a back button that takes you back to the start screen
     backButton = Button(self, text = "Back", command = self.startscreen)
@@ -784,7 +786,7 @@ class Game(Frame):
 
   def createPlayer(self,chosemap):
     self.clearscreen()
-    self.selectedmap = self.testmap
+    self.selectedmap = chosemap
     # Create the input that the player will use to make their name
     name = StringVar()
     playername = Entry(self, textvariable = name)
@@ -980,7 +982,7 @@ class Game(Frame):
       my_card['command'] = lambda idx =i: self.cardpress(idx,player,monster)
       my_card.image = cardImg
       my_card.pack()
-      my_card.place(x = (100*(i+1)), y = 400)
+      my_card.place(x = (90*(i+1)), y = 400)
       cardtip = Pmw.Balloon(self)
       cardtip.bind(my_card,player.hand[i].balloontip)
 
@@ -992,9 +994,9 @@ class Game(Frame):
     # Outputs the monster's attack on the player
     if self.turn > 0:
       # Print card used
-      attackmessage = Label(self,text = "{} used {}".format(monster.name,self.monsterattack.name))
+      attackmessage = Label(self,text = "{} \nused \n{}".format(monster.name,self.monsterattack.name))
       attackmessage.pack()
-      attackmessage.place(x = 650,y = 600)
+      attackmessage.place(x = 650,y = 200)
       attackmessage.config(font = (Game.font,Game.buttonsizelarge))
 
     # Once the moster dies the player is taken to the loot screen
@@ -1197,13 +1199,17 @@ class Game(Frame):
     # Presents the cards to the player to take 1
     for i in range(0,len(lootcards)):
       card = Image.open(lootcards[i].image)
-      card = card.resize((180,70), Image.ANTIALIAS)
+      card = card.resize((160,200), Image.ANTIALIAS)
       cardImg =  ImageTk.PhotoImage(card)
       my_card = Button(self,image=cardImg)
       my_card['command'] = lambda idx =i: self.postloot(player,lootcards[idx])
       my_card.image = cardImg
       my_card.pack()
-      my_card.place(x = (200*(i+1)), y = 300)
+      my_card.place(x = (200*(i+1)-75), y = 100)
+    plyerattackmessage = Label(self,text = "Select a Reward Card to Progress")
+    plyerattackmessage.pack()
+    plyerattackmessage.place(x = 150,y = 400)
+    plyerattackmessage.config(font = (Game.font,Game.buttonsizelarge))
     
     
     
@@ -1223,6 +1229,24 @@ class Game(Frame):
     if player.health < 1:
       self.deathscreen()
     # Show the map
+    for i in range(0, len(self.selectedmap)):
+      encounter = Image.open(self.selectedmap[i])
+      encounter = encounter.resize((59, 70), Image.ANTIALIAS)
+      encounterImg = ImageTk.PhotoImage(encounter)
+      my_encounter = Label(self, image = encounterImg)
+      my_encounter.image = encounterImg
+      my_encounter.pack()
+      my_encounter.place(x =(61 * (i)), y = 150)
+    # SHows the players position
+    for i in range(0,self.mapposition):
+      position = Image.open("X.jpg")
+      position = position.resize((59, 70), Image.ANTIALIAS)
+      positionImg = ImageTk.PhotoImage(position)
+      my_position = Label(self, image = positionImg)
+      my_position.image = positionImg
+      my_position.pack()
+      my_position.place(x =(61 * (i)), y = 150)
+    self.showkey(350)
     # Let the player look at deck
     # Button to continue onto the next encounter
     continueButton = Button(self, text = "Continue", command = lambda: self.processmap(player))
