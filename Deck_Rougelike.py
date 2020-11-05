@@ -2,6 +2,7 @@ from random import randint
 from tkinter import *
 import tkinter as tk
 from PIL import ImageTk,Image
+import Pmw
 
 ##############################################################################
 ## CARD SECTION
@@ -36,10 +37,11 @@ class FireBall(Card):
     self.buff = []
     self.stacks = 0
     self.energyuse = 1
+    self.balloontip = "{}\nDamage = {}\nUnleash a searing fireball.".format(self.name,self.damage)
 
 class Guard(Card):
   def __init__(self):
-    self.name = "Guard"
+    self.name = "Sheild"
     self.image = "guard.png"
     self.damage = 0
     self.guard = 5
@@ -47,6 +49,7 @@ class Guard(Card):
     self.buff = []
     self.stacks = 0
     self.energyuse = 1
+    self.balloontip = "{}\nGuard = {}\nReady yourself with a sheild.".format(self.name,self.guard)
 
 class Adrenaline(Card):
   def __init__(self):
@@ -55,9 +58,10 @@ class Adrenaline(Card):
     self.damage = 5
     self.guard = 0
     self.debuff = []
-    self.buff = ["resistance"]
+    self.buff = ["Resistance"]
     self.stacks = 3
     self.energyuse = 1
+    self.balloontip = "{}\nBuff = {}\nA rush of adrenaline gives you \nmore guard the more you use energy.".format(self.name,self.buff[0])
 
   
 
@@ -65,12 +69,13 @@ class Lightning(Card):
   def __init__(self):
     self.name = "Lightning"
     self.image = "lightning.jpg"
-    self.damage = 1
+    self.damage = 4
     self.guard = 0
     self.debuff = []
     self.buff = []
     self.stacks = 0
     self.energyuse = 1
+    self.balloontip = "{}\nDamage = {}\nConjure a bolt of lightning from your fingers.".format(self.name,self.damage)
 
 class IceSpear(Card):
   def __init__(self):
@@ -205,7 +210,7 @@ class Bite(Card):
         self.debuff = []
         self.buff = []
         self.stacks = []
-        self.energy = 1
+        self.energyuse = 1
 
 class Scratch(Card):
     def __init__(self):
@@ -234,7 +239,7 @@ class SlimeWave(Card):
         self.debuff = []
         self.buff = []
         self.stacks = []
-        self.energy = 1
+        self.energyuse = 1
 
 class Slippery(Card):
     def __init__(self):
@@ -282,7 +287,7 @@ class HardenedSkin(Card):
         self.damage = 0
         self.guard = 0
         self.debuff = []
-        self.buff = ["resistance"]
+        self.buff = ["Resistance"]
         self.stacks = 3
         self.energyuse =1
 
@@ -302,7 +307,7 @@ class DeadFlesh(Card):
         self.damage = 3
         self.guard = 0
         self.debuff = ["poison"]
-        self.buff = ["resistance"]
+        self.buff = ["Resistance"]
         self.stacks = 2
         self.energyuse = 2
 
@@ -448,7 +453,7 @@ class Creature():
                 pass
 
     def addbuff(self,card):
-        bufflist = ["resistance"]
+        bufflist = ["Resistance"]
 
         for i in bufflist:
             if card.buff.count(i) == 1:
@@ -467,7 +472,7 @@ class Creature():
     def applybuff(self,target):
       # Given list off all the different status effects
       # List of status effects: resistance
-      if self.status.count("resistance") > 0:
+      if self.status.count("Resistance") > 0:
         self.resistance()
       if self.status.count("heal") > 0:
         self.heal()
@@ -550,6 +555,8 @@ class Player(Creature):
     def __init__(self,name):
         # Sets the player's name
         self.name = name
+        # Sets the player's image
+        self.image = "Hunter.jpg"
         # Sets the player's max health
         self.maxhealth = 50
         # Sets the player's health
@@ -685,7 +692,10 @@ class Game(Frame):
   # Sets the Game's font
   font = "Courier"
   # Sets the Game's button size
-  buttonsize = 20 
+  buttonsizelarge = 20
+  buttonsizemedium = 14
+  buttonsizesmall = 5
+
 
   def __init__(self, master=None):
     Frame.__init__(self, master)
@@ -698,6 +708,7 @@ class Game(Frame):
     self.map1 = self.mapmaker()
     self.map2 = self.mapmaker()
     self.map3 = self.mapmaker()
+    self.testmap = ["weak.jpg","miniboss.jpg","bonfire.jpg","random.png","boss.jpg"]
 
   #Creation of init_window
   def init_gamewindow(self):
@@ -720,6 +731,14 @@ class Game(Frame):
     # clear screen
     self.clearscreen()
     #Make the Title Label
+    background = Image.open("Slime.jpg")
+    background = background.resize((800,600), Image.ANTIALIAS)
+    backgroundImg =  ImageTk.PhotoImage(background)
+    my_background = Label(self,image=backgroundImg)
+    my_background.image = backgroundImg
+    my_background.pack()
+
+    
     start = Label(self, text = "Adventures' Guild")
     start.pack()
     # Place the Label
@@ -732,7 +751,7 @@ class Game(Frame):
     # placing the button on my window
     startButton.place(x=325, y=400)
     # Set the font and font size
-    startButton.config(font=(Game.font,Game.buttonsize))
+    startButton.config(font=(Game.font,Game.buttonsizelarge))
 
   # Function that makes the maps randomly
   def mapmaker(self):
@@ -761,7 +780,7 @@ class Game(Frame):
     # Returns the made map
     return newmap
 
-  def showmap(self,givenmap):
+  def showmap(self,givenmap,row):
       for i in range(0, len(givenmap)):
           encounter = Image.open(givenmap[i])
           encounter = encounter.resize((40, 30), Image.ANTIALIAS)
@@ -769,7 +788,23 @@ class Game(Frame):
           my_encounter = Label(self, image = encounterImg)
           my_encounter.image = encounterImg
           my_encounter.pack()
-          my_encounter.place(x = (50 * (i+1)), y = 200)
+          my_encounter.place(x = (50 * (i+1)), y = row)
+
+  def showkey(self,row):
+      keyimages = ["weak.jpg","miniboss.jpg","bonfire.jpg","random.png","boss.jpg"]
+      key = ["Weak Encounter","MiniBoss Encounter","Rest Encounter","Random Encounter","Boss Encounter"]
+      for i in range(0, len(keyimages)):
+          encounter = Image.open(keyimages[i])
+          encounter = encounter.resize((40, 30), Image.ANTIALIAS)
+          encounterImg = ImageTk.PhotoImage(encounter)
+          my_encounter = Label(self, image = encounterImg)
+          my_encounter.image = encounterImg
+          my_encounter.pack()
+          my_encounter.place(x = (50), y = row + (35 * (i + 1)))
+          keyLabel = Label(self,text = key[i])
+          keyLabel.config(font=(Game.font,10))
+          keyLabel.place(x = (100), y = (row + 5) + (35 * (i + 1)))
+          
 
 
 
@@ -777,88 +812,64 @@ class Game(Frame):
   def selectmap(self):
     # Set variables for the columns and rows for organization
     column = 280
-    row1 = 100
-    row2 = 250
-    row3 = 400
-    row4 = 500
+    row1 = 50
+    row2 = 170
+    row3 = 290
+    row4 = 410
     
     # Clears the screen
     self.clearscreen()
     # Makes the show map buttons that take you to their respective map screen
-    showmap1Button = Button(self, text="Show Map 1", command = self.map1screen)
-    showmap1Button.place(x = column , y = row1)
-    showmap1Button.config(font=(Game.font,Game.buttonsize))
-    showmap2Button = Button(self, text="Show Map 2", command = self.map2screen)
-    showmap2Button.place(x = column , y = row2)
-    showmap2Button.config(font=(Game.font,Game.buttonsize))
-    showmap3Button = Button(self, text="Show Map 3", command = self.map3screen)
-    showmap3Button.place(x = column , y = row3)
-    showmap3Button.config(font=(Game.font,Game.buttonsize))
+    selectmap1Button = Button(self, text="Select Map 1")
+    selectmap1Button.place(x = column , y = row1 + 30)
+    selectmap1Button.config(font=(Game.font,Game.buttonsizelarge))
+    selectmap1Button['command'] = lambda mapid = self.map1: self.createPlayer(mapid)
+    self.showmap(self.map1,row1)
+    selectmap2Button = Button(self, text="Select Map 2")
+    selectmap2Button.place(x = column , y = row2 +30)
+    selectmap2Button.config(font=(Game.font,Game.buttonsizelarge))
+    selectmap2Button['command'] = lambda mapid = self.map2: self.createPlayer(mapid)
+    self.showmap(self.map2,row2)
+    selectmap3Button = Button(self, text="Select Map 3")
+    selectmap3Button.place(x = column , y = row3 + 30)
+    selectmap3Button.config(font=(Game.font,Game.buttonsizelarge))
+    selectmap3Button['command'] = lambda mapid = self.map3: self.createPlayer(mapid)
+    self.showmap(self.map3,row3)
+
+ 
+    testmapButton = Button(self, text="Test Map")
+    testmapButton.place(x = 650 , y = 5)
+    testmapButton.config(font=(Game.font, 10))
+    testmapButton['command'] = lambda mapid = self.testmap: self.createPlayer(mapid)
+    #Key
+    self.showkey(350)
+    
     # Makes a back button that takes you back to the start screen
     backButton = Button(self, text = "Back", command = self.startscreen)
     backButton.place(x = 330, y = row4)
-    backButton.config(font=(Game.font,Game.buttonsize))
+    backButton.config(font=(Game.font,Game.buttonsizelarge))
 
 
-  # Shows the selected map
-  def map1screen(self):
+  
+
+
+
+
+  def createPlayer(self,chosemap):
     self.clearscreen()
-    self.selectedmap = self.map1
-    self.showmap(self.map1)
-    # Makes a select map button for when you select a map
-    # This will start your adventure
-    selectmapButton = Button(self, text = "Create Character", command = self.createPlayer)
-    selectmapButton.place(x = 210, y = 410)
-    selectmapButton.config(font=(Game.font,Game.buttonsize))
-    backButton = Button(self, text = "Back", command = self.selectmap)
-    backButton.place(x = 325, y = 500)
-    backButton.config(font=(Game.font,Game.buttonsize))
-    
-  # Shows the selected map
-  def map2screen(self):
-    self.clearscreen()
-    self.selectedmap = self.map2
-    self.showmap(self.map2)
-    # Makes a select map button for when you select a map
-    # This will start your adventure
-    selectmapButton = Button(self, text = "Create Character", command = self.createPlayer)
-    selectmapButton.place(x = 210, y = 410)
-    selectmapButton.config(font=(Game.font,Game.buttonsize))
-    backButton = Button(self, text = "Back", command = self.selectmap)
-    backButton.place(x = 325, y = 500)
-    backButton.config(font=(Game.font,Game.buttonsize))
-
-  # Shows the selected map
-  def map3screen(self):
-    self.clearscreen()
-    self.selectedmap = self.map3
-    self.showmap(self.map3)
-    # Makes a select map button for when you select a map
-    # This will start your adventure
-    selectmapButton = Button(self, text = "Create Character", command = self.createPlayer)
-    selectmapButton.place(x = 210, y = 410)
-    selectmapButton.config(font=(Game.font,Game.buttonsize))
-    backButton = Button(self, text = "Back", command = self.selectmap)
-    backButton.place(x = 325, y = 500)
-    backButton.config(font=(Game.font,Game.buttonsize))
-
-
-
-
-  def createPlayer(self):
-    self.clearscreen()
+    self.selectedmap = chosemap
     # Create the input that the player will use to make their name
     name = StringVar()
     playername = Entry(self, textvariable = name)
     playername.pack()
     playername.place(x = 250, y = 300)
-    playername.config(font=(Game.font,Game.buttonsize))
+    playername.config(font=(Game.font,Game.buttonsizelarge))
     name.set("Player")
  
     # This will start your adventure
     startadvButton = Button(self, text = "Start Adventure", command =lambda: self.postcreatePlayer(name.get()))
     startadvButton.place(x = 150, y = 400)
-    startadvButton.config(font=(Game.font,Game.buttonsize))
+    startadvButton.config(font=(Game.font,Game.buttonsizelarge))
 
 
   def postcreatePlayer(self,name):
@@ -908,12 +919,12 @@ class Game(Frame):
     firepitmessage.pack()
     firepitmessage.insert(tk.END, "You come upon a burning fire pit. You feel\nat peace and safe near the fire.\nWeirdly there are provisions of food and\nwater for you around the fire.")
     firepitmessage.place(x = 650,y = 10)
-    firepitmessage.config(font = (Game.font,Game.buttonsize))
+    firepitmessage.config(font = (Game.font,Game.buttonsizelarge))
 
     # Makes a walk away button 
     restButton = Button(self,text = "Rest", command = lambda: self.postencounter(player))
     restButton.pack()
-    restButton.config(font = (Game.font,Game.buttonsize))
+    restButton.config(font = (Game.font,Game.buttonsizelarge))
     restButton.place(x = 650, y = 650)
     
     # Heals the player
@@ -938,18 +949,18 @@ class Game(Frame):
     chestmessage.pack()
     chestmessage.insert(tk.END, "A chest apears in front of  you.\n A warning is written on the lid.\n Open at your own risk")
     chestmessage.place(x = 650,y = 10)
-    chestmessage.config(font = (Game.font,Game.buttonsize))
+    chestmessage.config(font = (Game.font,Game.buttonsizelarge))
 
     # Makes a open chest button with the odds of the player succeding
     openButton = Button(self,text = "Open the chest. 70% chance of success", command = lambda: self.openweakchest(player))
     openButton.pack()
-    openButton.config(font = (Game.font,Game.buttonsize))
+    openButton.config(font = (Game.font,Game.buttonsizelarge))
     openButton.place(x = 650, y = 600)
 
     # Makes a walk away button 
     walkawayButton = Button(self,text = "Walk Away", command = lambda: self.postencounter(player))
     walkawayButton.pack()
-    walkawayButton.config(font = (Game.font,Game.buttonsize))
+    walkawayButton.config(font = (Game.font,Game.buttonsizelarge))
     walkawayButton.place(x = 650, y = 650)
     
   # Function if the player decides to open the chest
@@ -1042,20 +1053,22 @@ class Game(Frame):
       my_card['command'] = lambda idx =i: self.cardpress(idx,player,monster)
       my_card.image = cardImg
       my_card.pack()
-      my_card.place(x = (100*(i+1)), y = 400)
+      my_card.place(x = (90*(i+1)), y = 400)
+      cardtip = Pmw.Balloon(self)
+      cardtip.bind(my_card,player.hand[i].balloontip)
 
     # End turn button that will end the player's turn
     endturnbutton = Button(self, text = "End Turn", command = lambda: self.endturn(player,monster))
     endturnbutton.place(x = 210, y = 510)
-    endturnbutton.config(font=(Game.font,Game.buttonsize))
+    endturnbutton.config(font=(Game.font,Game.buttonsizelarge))
 
     # Outputs the monster's attack on the player
     if self.turn > 0:
       # Print card used
-      attackmessage = Label(self,text = "{} used {}".format(monster.name,self.monsterattack.name))
+      attackmessage = Label(self,text = "{} \nused \n{}".format(monster.name,self.monsterattack.name))
       attackmessage.pack()
-      attackmessage.place(x = 650,y = 600)
-      attackmessage.config(font = (Game.font,Game.buttonsize))
+      attackmessage.place(x = 650,y = 200)
+      attackmessage.config(font = (Game.font,Game.buttonsizelarge))
 
     # Once the moster dies the player is taken to the loot screen
     if monster.health < 1:
@@ -1094,50 +1107,69 @@ class Game(Frame):
     
   def battlefield(self, op, creature):
     PLAYER_X = 150
-    PLAYER_Y = 250
-    MONSTER_X = 910
+    PLAYER_Y = 200
+    PLAYER_INFO_X = 150
+    PLAYER_INFO_Y = 200
+    MONSTER_X = 510
     MONSTER_Y = 200
+    MONSTER_INFO_X = 510
+    MONSTER_INFO_Y =200
+    SPACING = 25
+    
+    
     # Sets the background
-    background = Image.open("cave.jpg")
-    background = background.resize((1200,500), Image.ANTIALIAS)
+    background = Image.open("cave.png")
+    background = background.resize((800,600), Image.ANTIALIAS)
     backgroundImg =  ImageTk.PhotoImage(background)
     my_background = Label(self,image=backgroundImg)
     my_background.image = backgroundImg
     my_background.pack()
 
     # Sets the player's image
-    player = Image.open("Hunter.jpg")
-    player = player.resize((80,40), Image.ANTIALIAS)
+    player = Image.open(op.image)
+    player = player.resize((80,100), Image.ANTIALIAS)
     playerImg =  ImageTk.PhotoImage(player)
     my_player = Label(self,image=playerImg)
     my_player.image = playerImg
     my_player.pack()
     my_player.place(x = PLAYER_X, y = PLAYER_Y)
+    # Shows player's name
+    playername = Label(self,text = "{}".format(op.name))
+    playername.place(x=PLAYER_INFO_X,y= (PLAYER_INFO_Y)-(4*SPACING))
+    playername.config(font = (Game.font,Game.buttonsizemedium))
     # Shows the player's health
-    playerhealth = Label(self,text = "{}/{}".format(op.health,op.maxhealth))
-    playerhealth.place(x=PLAYER_X,y= (PLAYER_Y + 40))
-    playerhealth.config(font = (Game.font,Game.buttonsize))
+    playerhealth = Label(self,text = "HP {}/{}".format(op.health,op.maxhealth))
+    playerhealth.place(x=PLAYER_INFO_X,y= (PLAYER_INFO_Y)-(3*SPACING))
+    playerhealth.config(font = (Game.font,Game.buttonsizemedium))
     # Shows the player's guard
     playerguard = Label(self,text = "{} Guard".format(op.guard))
-    playerguard.place(x=PLAYER_X,y= (PLAYER_Y + 80))
-    playerguard.config(font = (Game.font,Game.buttonsize))
+    playerguard.place(x=PLAYER_INFO_X,y= (PLAYER_INFO_Y)-(2*SPACING))
+    playerguard.config(font = (Game.font,Game.buttonsizemedium))
+    # Shows the player's guard
+    playerenergy = Label(self,text = "{}/{} Energy".format(op.energy,op.maxenergy))
+    playerenergy.place(x=PLAYER_INFO_X,y= (PLAYER_INFO_Y)-(1*SPACING))
+    playerenergy.config(font = (Game.font,Game.buttonsizemedium))
           
     # Shows the monster's image
-    monster = Image.open("Slime.jpg")
-    monster = monster.resize((80,40), Image.ANTIALIAS)
+    monster = Image.open(creature.image)
+    monster = monster.resize((80,100), Image.ANTIALIAS)
     monsterImg =  ImageTk.PhotoImage(monster)
     my_monster = Label(self,image=monsterImg)
     my_monster.image = monsterImg
     my_monster.pack()
     my_monster.place(x = MONSTER_X, y = MONSTER_Y)
+    # Shows player's name
+    playername = Label(self,text = "{}".format(creature.name))
+    playername.place(x=MONSTER_INFO_X,y= (MONSTER_INFO_Y)-(3*SPACING))
+    playername.config(font = (Game.font,Game.buttonsizemedium))
     # Shows the monster's health
-    monsterhealth = Label(self,text = "{}/{}".format(creature.health,creature.maxhealth))
-    monsterhealth.place(x= MONSTER_X,y= (MONSTER_Y + 40))
-    monsterhealth.config(font = (Game.font,Game.buttonsize))
+    monsterhealth = Label(self,text = "HP {}/{}".format(creature.health,creature.maxhealth))
+    monsterhealth.place(x= MONSTER_INFO_X,y= (MONSTER_INFO_Y)-(2*SPACING))
+    monsterhealth.config(font = (Game.font,Game.buttonsizemedium))
     # SHows the monster's guard
     monsterguard = Label(self,text = "{} Guard".format(creature.guard))
-    monsterguard.place(x=MONSTER_X,y= (MONSTER_Y + 80))
-    monsterguard.config(font = (Game.font,Game.buttonsize))
+    monsterguard.place(x=MONSTER_INFO_X,y= (MONSTER_INFO_Y)-(1*SPACING))
+    monsterguard.config(font = (Game.font,Game.buttonsizemedium))
 
 
   
@@ -1193,7 +1225,7 @@ class Game(Frame):
   # Removes statuses function
   def removestats(self,creature):
     # Given list off all the different status effects
-    ailments = ["resistance"]
+    ailments = ["Resistance"]
     for i in range(0,len(ailments)):
       # If the player has at least one of these effects subtract one from the list
       if creature.status.count(ailments[i]) > 0:
@@ -1238,13 +1270,17 @@ class Game(Frame):
     # Presents the cards to the player to take 1
     for i in range(0,len(lootcards)):
       card = Image.open(lootcards[i].image)
-      card = card.resize((180,70), Image.ANTIALIAS)
+      card = card.resize((160,200), Image.ANTIALIAS)
       cardImg =  ImageTk.PhotoImage(card)
       my_card = Button(self,image=cardImg)
       my_card['command'] = lambda idx =i: self.postloot(player,lootcards[idx])
       my_card.image = cardImg
       my_card.pack()
-      my_card.place(x = (200*(i+1)), y = 300)
+      my_card.place(x = (200*(i+1)-75), y = 100)
+    plyerattackmessage = Label(self,text = "Select a Reward Card to Progress")
+    plyerattackmessage.pack()
+    plyerattackmessage.place(x = 150,y = 400)
+    plyerattackmessage.config(font = (Game.font,Game.buttonsizelarge))
     
     
     
@@ -1264,11 +1300,29 @@ class Game(Frame):
     if player.health < 1:
       self.deathscreen()
     # Show the map
+    for i in range(0, len(self.selectedmap)):
+      encounter = Image.open(self.selectedmap[i])
+      encounter = encounter.resize((59, 70), Image.ANTIALIAS)
+      encounterImg = ImageTk.PhotoImage(encounter)
+      my_encounter = Label(self, image = encounterImg)
+      my_encounter.image = encounterImg
+      my_encounter.pack()
+      my_encounter.place(x =(61 * (i)), y = 150)
+    # SHows the players position
+    for i in range(0,self.mapposition):
+      position = Image.open("X.jpg")
+      position = position.resize((59, 70), Image.ANTIALIAS)
+      positionImg = ImageTk.PhotoImage(position)
+      my_position = Label(self, image = positionImg)
+      my_position.image = positionImg
+      my_position.pack()
+      my_position.place(x =(61 * (i)), y = 150)
+    self.showkey(350)
     # Let the player look at deck
     # Button to continue onto the next encounter
     continueButton = Button(self, text = "Continue", command = lambda: self.processmap(player))
     continueButton.place(x = 325, y = 500)
-    continueButton.config(font=(Game.font,Game.buttonsize))
+    continueButton.config(font=(Game.font,Game.buttonsizelarge))
 
   # Death screen function
   def deathscreen(self):
@@ -1277,11 +1331,11 @@ class Game(Frame):
     deathmessage = Label(self,text = "YOU DIED!! GET BETTER!!")
     deathmessage.pack()
     deathmessage.place(x = 650,y = 600)
-    deathmessage.config(font = (Game.font,Game.buttonsize))
+    deathmessage.config(font = (Game.font,Game.buttonsizelarge))
     # Restart button
     continueButton = Button(self, text = "Restart", command = lambda: self.play())
     continueButton.place(x = 325, y = 500)
-    continueButton.config(font=(Game.font,Game.buttonsize))
+    continueButton.config(font=(Game.font,Game.buttonsizelarge))
     
 
   # play the game
@@ -1291,12 +1345,13 @@ class Game(Frame):
 
 
 ###############################################################################
-WIDTH = 1366
-HEIGHT = 768
+WIDTH = 800
+HEIGHT = 600
 
 window = Tk()
 window.title("Adventure Guild")
 window.geometry("{}x{}".format(WIDTH,HEIGHT))
+Pmw.initialise(window)
 
 # create the GUI as a Tkinter canvas inside the window
 g = Game(window)

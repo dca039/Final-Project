@@ -5,11 +5,9 @@
 
 What needs to happen:
 Combat needs polished gui
-Map needs to be finished
-encounter lists need to be completed
+Map key needs to be finished
 make rest encounter more polished
-make more cards
-make more monsters
 loot screen needs polished gui
-make pics for player and monsters
 make pics for attacks
+Add more text to the random encounters
+Make more ideas for random encounters you can just put them below this and i will program them in
