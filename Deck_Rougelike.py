@@ -321,15 +321,55 @@ class ZombieHoard(Card):
         self.stacks = []
         self.energyuse = 2
 
+class HeadSlam(Card):
+    def __init__(self):
+        self.name = "Head Slam"
+        self.damage = 10
+        self.guard = 0
+        self.debuff = []
+        self.buff = []
+        self.stacks = []
+        self.energyuse = 2
 
+class TuskAttack(Card):
+    def __init__(self):
+        self.name = "Tusk Attack"
+        self.damage = 5
+        self.guard = 0
+        self.debuff = ["bleeding"]
+        self.buff = []
+        self.stacks = 2
+        self.energyuse = 2
 
+class ClawAttack(Card):
+    def __init__(self):
+        self.name = "Claw Attack"
+        self.damage = 5
+        self.guard = 0
+        self.debuff = []
+        self.buff = []
+        self.stacks = []
+        self.energyuse = 1
 
+class Sting(Card):
+    def __init__(self):
+        self.name = "Sting"
+        self.damage = 5
+        self.guard = 0
+        self.debuff = ["poison"]
+        self.buff = []
+        self.stacks = 2
+        self.energyuse = 1
 
-
-
-
-
-
+class MasterSwordsmen(Card):
+    def __init__(self):
+        self.name = "Master Swordsmen"
+        self.damage = 10
+        self.guard = 0
+        self.debuff = ["bleeding"]
+        self.buff = ["resistance"]
+        self.stacks = 2
+        self.energyuse = 3
 
 
 
@@ -600,6 +640,37 @@ class Witch(Creature):
         self.movelist = [FireBall(), Lightning(), HealthPotion()]
         self.energy = 999
 
+class WildBoar(Creature):
+    def __init__(self):
+        self.name = "Wild Boar"
+        self.image = "boar.jpg"
+        self.maxhealth = 15
+        self.health = 15
+        self.guard = 0
+        self.status = []
+        self.movelist = [HeadSlam(), HardenedSkin(), TuskAttack()]
+        self.energy = 999
+
+class GiantScoripion(Creature):
+    def __init__(self):
+        self.name = "Giant Scorpion"
+        self.image = "scorpion.jpg"
+        self.maxhealth = 15
+        self.health = 15
+        self.guard = 0
+        self.status = []
+        self.movelist = [ClawAttack(), Sting(), Bite()]
+        self.energy = 999
+
+class DarkKnight(Creature):
+    def __init__(self):
+        self.name = "Dark Knight"
+        self.image = "darkknight.jpg"
+        self.maxhealth = 25
+        self.health = 25
+        self.status = []
+        self.movelist = [Guard(), MasterSwordsmen(), BodySlam(), SwordFury()]
+        self.energy = 999
 
         
 
