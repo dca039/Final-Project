@@ -4,8 +4,9 @@
 
 
 What needs to happen:
+Tool tips need to be finished
 Combat needs polished gui
-Map key needs to be finished
+Beginner help needs to be finished
 make rest encounter more polished
 loot screen needs polished gui
 make pics for attacks

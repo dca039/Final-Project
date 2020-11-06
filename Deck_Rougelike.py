@@ -3,7 +3,7 @@ from tkinter import *
 import tkinter as tk
 from PIL import ImageTk,Image
 import Pmw
-
+from time import sleep
 ##############################################################################
 ## CARD SECTION
 class Card:
@@ -803,7 +803,62 @@ class Game(Frame):
 
   def postcreatePlayer(self,name):
     P1 = Player(name)
-    self.processmap(P1)
+    self.tipsscreen1(P1)
+
+  def tipsscreen1(self,op):
+    
+    PLAYER_INFO_X = 10
+    PLAYER_INFO_Y = 300
+    MONSTER_INFO_X = 510
+    MONSTER_INFO_Y =200
+    SPACING = 40
+    self.clearscreen()
+    # Sets the player's image
+    player = Image.open(op.image)
+    player = player.resize((80,100), Image.ANTIALIAS)
+    playerImg =  ImageTk.PhotoImage(player)
+    my_player = Label(self,image=playerImg)
+    my_player.image = playerImg
+    my_player.pack()
+    my_player.place(x = PLAYER_INFO_X, y = PLAYER_INFO_Y)
+    # Shows player's name
+    playername = Label(self,text = "{}".format(op.name))
+    playername.place(x=PLAYER_INFO_X,y= (PLAYER_INFO_Y)-(4*SPACING))
+    playername.config(font = (Game.font,Game.buttonsizelarge))
+    # Shows the player's health
+    playerhealth = Label(self,text = "HP {}/{}".format(op.health,op.maxhealth))
+    playerhealth.place(x=PLAYER_INFO_X,y= (PLAYER_INFO_Y)-(3*SPACING))
+    playerhealth.config(font = (Game.font,Game.buttonsizelarge))
+    # Shows the player's guard
+    playerguard = Label(self,text = "{} Guard".format(op.guard))
+    playerguard.place(x=PLAYER_INFO_X,y= (PLAYER_INFO_Y)-(2*SPACING))
+    playerguard.config(font = (Game.font,Game.buttonsizelarge))
+    # Shows the player's energy
+    playerenergy = Label(self,text = "{}/{} Energy".format(op.energy,op.maxenergy))
+    playerenergy.place(x=PLAYER_INFO_X,y= (PLAYER_INFO_Y)-(1*SPACING))
+    playerenergy.config(font = (Game.font,Game.buttonsizelarge))
+    # Gives the user tips for playing the game
+    playerhealthtip = Label(self,text = "<- Player's Name")
+    playerhealthtip.place(x=PLAYER_INFO_X + 100,y= (PLAYER_INFO_Y)-(4*SPACING))
+    playerhealthtip.config(font = (Game.font,Game.buttonsizelarge))
+    playerhealthtip = Label(self,text = "<- Player's Health")
+    playerhealthtip.place(x=PLAYER_INFO_X + 100,y= (PLAYER_INFO_Y)-(3*SPACING))
+    playerhealthtip.config(font = (Game.font,Game.buttonsizelarge))
+    playerguard = Label(self,text = "<- Guard is reduces the damage you take")
+    playerguard.place(x=PLAYER_INFO_X+100,y= (PLAYER_INFO_Y)-(2*SPACING))
+    playerguard.config(font = (Game.font,Game.buttonsizelarge))
+    playerenergy = Label(self,text = "<- Energy is used to attack.")
+    playerenergy.place(x=PLAYER_INFO_X+170,y= (PLAYER_INFO_Y)-(1*SPACING))
+    playerenergy.config(font = (Game.font,Game.buttonsizelarge))
+    playerenergy2 = Label(self,text = "Each attack has its \nown energy consumption")
+    playerenergy2.place(x=PLAYER_INFO_X+230,y= (PLAYER_INFO_Y))
+    playerenergy2.config(font = (Game.font,Game.buttonsizelarge))
+
+    endturnbutton = Button(self, text = "End Turn", command = lambda: self.processmap(op))
+    endturnbutton.place(x = 210, y = 510)
+    endturnbutton.config(font=(Game.font,Game.buttonsizelarge))
+    
+          
 
   # Function that processes the given map
   def processmap(self,player):
