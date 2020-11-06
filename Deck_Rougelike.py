@@ -731,7 +731,7 @@ class Game(Frame):
     # clear screen
     self.clearscreen()
     #Make the Title Label
-    background = Image.open("Slime.jpg")
+    background = Image.open("mainmenu.jpg")
     background = background.resize((800,600), Image.ANTIALIAS)
     backgroundImg =  ImageTk.PhotoImage(background)
     my_background = Label(self,image=backgroundImg)
@@ -910,13 +910,13 @@ class Game(Frame):
     playerenergy.config(font = (Game.font,Game.buttonsizelarge))
     # Gives the user tips for playing the game
     playerhealthtip = Label(self,text = "<- Player's Name")
-    playerhealthtip.place(x=PLAYER_INFO_X + 100,y= (PLAYER_INFO_Y)-(4*SPACING))
+    playerhealthtip.place(x=PLAYER_INFO_X + 150,y= (PLAYER_INFO_Y)-(4*SPACING))
     playerhealthtip.config(font = (Game.font,Game.buttonsizelarge))
     playerhealthtip = Label(self,text = "<- Player's Health")
-    playerhealthtip.place(x=PLAYER_INFO_X + 100,y= (PLAYER_INFO_Y)-(3*SPACING))
+    playerhealthtip.place(x=(PLAYER_INFO_X + 150),y= (PLAYER_INFO_Y)-(3*SPACING))
     playerhealthtip.config(font = (Game.font,Game.buttonsizelarge))
     playerguard = Label(self,text = "<- Guard is reduces the damage you take")
-    playerguard.place(x=PLAYER_INFO_X+100,y= (PLAYER_INFO_Y)-(2*SPACING))
+    playerguard.place(x=PLAYER_INFO_X+150,y= (PLAYER_INFO_Y)-(2*SPACING))
     playerguard.config(font = (Game.font,Game.buttonsizelarge))
     playerenergy = Label(self,text = "<- Energy is used to attack.")
     playerenergy.place(x=PLAYER_INFO_X+170,y= (PLAYER_INFO_Y)-(1*SPACING))
