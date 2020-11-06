@@ -37,7 +37,7 @@ class FireBall(Card):
     self.buff = []
     self.stacks = 0
     self.energyuse = 1
-    self.balloontip = "{}\nDamage = {}\nUnleash a searing fireball.".format(self.name,self.damage)
+    self.balloontip = "{}\nDamage = {}\nEnergy = {}\nUnleash a searing fireball.".format(self.name, self.damage, self.energyuse)
 
 class Guard(Card):
   def __init__(self):
@@ -49,7 +49,7 @@ class Guard(Card):
     self.buff = []
     self.stacks = 0
     self.energyuse = 1
-    self.balloontip = "{}\nGuard = {}\nReady yourself with a sheild.".format(self.name,self.guard)
+    self.balloontip = "{}\nGuard = {}\nEnergy = {}\nReady yourself with a sheild.".format(self.name, self.guard, self.energyuse)
 
 class Adrenaline(Card):
   def __init__(self):
@@ -61,7 +61,8 @@ class Adrenaline(Card):
     self.buff = ["Resistance"]
     self.stacks = 3
     self.energyuse = 1
-    self.balloontip = "{}\nBuff = {}\nA rush of adrenaline gives you \nmore guard the more you use energy.".format(self.name,self.buff[0])
+    self.balloontip = "{}\nBuff = {}\nEnergy = {}\nA rush of adrenaline gives you \nmore guard the more you use energy."\
+        .format(self.name, self.buff[0], self.energyuse)
 
   
 
@@ -75,7 +76,7 @@ class Lightning(Card):
     self.buff = []
     self.stacks = 0
     self.energyuse = 1
-    self.balloontip = "{}\nDamage = {}\nConjure a bolt of lightning from your fingers.".format(self.name,self.damage)
+    self.balloontip = "{}\nDamage = {}\nEnergy = {}\nConjure a bolt of lightning from your fingers.".format(self.name, self.damage, self.energyuse)
 
 class IceSpear(Card):
   def __init__(self):
@@ -87,6 +88,7 @@ class IceSpear(Card):
     self.buff = []
     self.stacks = 0
     self.energyuse = 1
+    self.balloontip = "{}\nDamage = {}\nEnergy = {}\nSummon an ice spear and throw it with deadly accuracy.".format(self.name, self.damage, self.energyuse)
 
 class ConjureBear(Card):
   def __init__(self):
@@ -98,6 +100,7 @@ class ConjureBear(Card):
     self.buff = []
     self.stacks = 0
     self.energyuse = 2
+    self.balloontip = "{}\nDamage = {}\nEnergy = {}\nConjure a ferocious bear to attack your foe.".format(self.name, self.damage, self.energyuse)
 
 class MarksWomn(Card):
   def __init__(self):
@@ -109,6 +112,7 @@ class MarksWomn(Card):
     self.buff = []
     self.stacks = 0
     self.energyuse = 1
+    self.balloontip = "{}\nDamage = {}\nEnergy = {}\nCall on a markswoman for a kill shot".format(self.name, self.damage, self.energyuse)
 
 class Legionares(Card):
   def __init__(self):
@@ -120,6 +124,7 @@ class Legionares(Card):
     self.buff = []
     self.stacks = 0
     self.energyuse = 2
+    self.balloontip = "{}\nGuard = {}\nEnergy = {}\nRoman Legionares come to your aid with their mighty shields.".format(self.name, self.guard, self.energyuse)
 
 class VineWhip(Card):
   def __init__(self):
@@ -132,6 +137,7 @@ class VineWhip(Card):
     self.energy = 0
     self.stacks = 0
     self.energyuse = 1
+    self.balloontip = "{}\nDamage = {}\nEnergy = {}\nSummon a vine to strike your for.".format(self.name, self.damage, self.energyuse)
 
 class SwordFury(Card):
   def __init__(self):
@@ -139,9 +145,11 @@ class SwordFury(Card):
     self.image = "sword.jpg"
     self.damage = 10
     self.guard = 0
-    self.debuff = []
+    self.debuff = ["bleeding"]
     self.buff = []
+    self.stacks = 2
     self.energyuse = 2
+    self.balloontip = "{}\nDamage = {}\nDebuff = {}\nEnergy = {}\nConjure two swords and attack with lightening fast speed.".format(self.name, self.damage, self.debuff, self.energyuse)
 
 class PoisonArrow(Card):
   def __init__(self):
@@ -154,6 +162,7 @@ class PoisonArrow(Card):
     self.stacks = 3
     self.stacks = 0
     self.energyuse = 1
+    self.balloontip = "{}\nDamage = {}\nDebuff = {}\nEnergy = {}\nShoot your opponent with a poisoned arrow.".format(self.name, self.damage, self.debuff, self.energyuse)
 
 class HealthPotion(Card):
   def __init__(self):
@@ -165,6 +174,7 @@ class HealthPotion(Card):
     self.buff = ["heal"]
     self.stacks = 1
     self.energyuse = 1
+    self.balloontip = "{}\nBuff = {}\nEnergy = {}\nDrink a potion of healing to replenish your strength.".format(self.name, self.buff, self.energyuse)
 
 class Avalanche(Card):
   def __init__(self):
@@ -176,10 +186,11 @@ class Avalanche(Card):
     self.buff = []
     self.stacks = []
     self.energyuse = 2
+    self.balloontip = "{}\nDamage = {}\nEnergy = {}\nSummon an avalanche of huge boulders.".format(self.name, self.damage, self.energyuse)
 
-class LavaSmash(Card):
+class LavaQuake(Card):
   def __init__(self):
-    self.name = "Lava Smash"
+    self.name = "Lava Quake"
     self.image = "lava.jpg"
     self.damage = 20
     self.guard = 0
@@ -187,6 +198,7 @@ class LavaSmash(Card):
     self.buff = []
     self.stacks = []
     self.energyuse = 3
+    self.balloontip = "{}\nDamage = {}\nEnergy = {}\nSummon lava beneath your enemy's feet.".format(self.name, self.damage, self.energyuse)
 
 class KnifeThrow(Card):
   def __init__(self):
@@ -198,6 +210,7 @@ class KnifeThrow(Card):
     self.buff = []
     self.stacks = []
     self.energyuse = 1
+    self.balloontip = "{}\nDamage = {}\nEnergy = {}\nThrow a knife.".format(self.name, self.damage, self.energyuse)
 
 #################### Creature Cards ###############################
 
