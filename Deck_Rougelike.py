@@ -1138,6 +1138,21 @@ class Game(Frame):
     continuebutton.place(x = 260, y = 330)
     continuebutton.config(font=(Game.font,Game.buttonsizelarge))
 
+
+
+  # Death screen function
+  def deathscreen(self):
+    self.clearscreen()
+    self.background("death.jpg")
+    # Tell the player that they died 
+    deathmessage = Label(self,text = "YOU DIED!! GET BETTER!")
+    deathmessage.pack()
+    deathmessage.place(x = 5,y = 125)
+    deathmessage.config(font = (Game.font,44))
+    # Restart button
+    continueButton = Button(self, text = "Restart", command = lambda: self.play())
+    continueButton.place(x = 315, y = 330)
+    continueButton.config(font=(Game.font,Game.buttonsizelarge))
       
 ########################################################################################################
 ## COMBAT ENCOUNTERS SECTION  
@@ -1267,21 +1282,15 @@ class Game(Frame):
 
     
   def battlefield(self, op, creature):
-    PLAYER_X = 150
+    PLAYER_X = 180
     PLAYER_Y = 160
-    MONSTER_X = 510
+    MONSTER_X = 490
     MONSTER_Y = 160
     SPACING = 25
     
     
     # Sets the background
     self.background("cave.png")
-    background = Image.open("cave.png")
-    background = background.resize((Game.width,Game.height), Image.ANTIALIAS)
-    backgroundImg =  ImageTk.PhotoImage(background)
-    my_background = Label(self,image=backgroundImg)
-    my_background.image = backgroundImg
-    my_background.pack()
 
     # Sets the player's image
     player = Image.open(op.image)
@@ -1407,18 +1416,24 @@ class Game(Frame):
   def loot(self,player):
     self.clearscreen()
     self.background("mainmenu.jpg")
-    lootcards = []
+    
     # Decides what level of loot is given
     if self.lootlevel == "weak":
       cardlist = [FireBall(),FireBall(),FireBall()]
       # Set it equal so that the list is not messed up
       picklist = cardlist
+      self.giveloot(player,picklist)
     if self.lootlevel == "miniboss":
       cardlist = [Lightning(),Lightning(),Lightning()]
       # Set it equal so that the list is not messed up
       picklist = cardlist
+      self.giveloot(player,picklist)
     if self.lootlevel == "boss":
       self.coreencounter(player)
+
+
+  def giveloot(self,player,picklist):
+    lootcards = []
     for i in range (0,3):
       randcard = randint(0,len(picklist)-1)
       lootcards.append(picklist[randcard])
@@ -1492,18 +1507,7 @@ class Game(Frame):
     continueButton.place(x = 325, y = 300)
     continueButton.config(font=(Game.font,Game.buttonsizelarge))
 
-  # Death screen function
-  def deathscreen(self):
-    self.clearscreen()
-    # Tell the player that they died 
-    deathmessage = Label(self,text = "YOU DIED!! GET BETTER!!")
-    deathmessage.pack()
-    deathmessage.place(x = 100,y = 225)
-    deathmessage.config(font = (Game.font,Game.buttonsizelarge))
-    # Restart button
-    continueButton = Button(self, text = "Restart", command = lambda: self.play())
-    continueButton.place(x = 270, y = 360)
-    continueButton.config(font=(Game.font,Game.buttonsizelarge))
+  
     
 
   # play the game
