@@ -102,7 +102,7 @@ class ConjureBear(Card):
     self.energyuse = 2
     self.balloontip = "{}\nDamage = {}\nEnergy = {}\nConjure a ferocious bear to attack your foe.".format(self.name, self.damage, self.energyuse)
 
-class MarksWomn(Card):
+class MarksWoman(Card):
   def __init__(self):
     self.name = "Markswoman"
     self.image = "markswoman.jpg"
@@ -582,7 +582,7 @@ class Player(Creature):
         # Sets the player's gold
         self.gold = 0
         # Sets the player's deck
-        self.deck = [Adrenaline(),Lightning(),Lightning(),Lightning(),Lightning(),Lightning(),Lightning()]
+        self.deck = [Adrenaline(), Lightning(), KnifeThrow(), Lightning(), VineWhip(), Guard(), VineWhip()]
         # Sets the player's hand
         self.hand = []
         # Sets the player's trash
@@ -1419,12 +1419,12 @@ class Game(Frame):
     
     # Decides what level of loot is given
     if self.lootlevel == "weak":
-      cardlist = [FireBall(),FireBall(),FireBall()]
+      cardlist = [FireBall(), IceSpear(), PoisonArrow(), HealthPotion(), SwordFury()]
       # Set it equal so that the list is not messed up
       picklist = cardlist
       self.giveloot(player,picklist)
     if self.lootlevel == "miniboss":
-      cardlist = [Lightning(),Lightning(),Lightning()]
+      cardlist = [ConjureBear(), MarksWoman(), LavaQuake(), Legionares(), Avalanche()]
       # Set it equal so that the list is not messed up
       picklist = cardlist
       self.giveloot(player,picklist)
