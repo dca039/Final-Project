@@ -756,14 +756,14 @@ class Game(Frame):
     start = Label(self, text = "Adventures' Guild")
     start.pack()
     # Place the Label
-    start.place(x = 100,y = 225)
+    start.place(x = 100,y = 125)
     # Set the font and font size
     start.config(font=("Courier", 44))
 
     # creating a button instance
     startButton = Button(self, text="Start Game", command =self.selectmap)
     # placing the button on my window
-    startButton.place(x=325, y=400)
+    startButton.place(x=325, y=300)
     # Set the font and font size
     startButton.config(font=(Game.font,Game.buttonsizelarge))
 
@@ -804,6 +804,28 @@ class Game(Frame):
           my_encounter.pack()
           my_encounter.place(x = (50 * (i+1)), y = row)
 
+  def showkeypopup(self):
+      top = Toplevel()
+      top.title('Map Key')
+      top.geometry("250x310")
+      keyimages = ["weak.jpg","miniboss.jpg","bonfire.jpg","random.png","boss.jpg"]
+      key = ["Weak Encounter","MiniBoss Encounter","Rest Encounter","Random Encounter","Boss Encounter"]
+      for i in range(0, len(keyimages)):
+          encounter = Image.open(keyimages[i])
+          encounter = encounter.resize((40, 40), Image.ANTIALIAS)
+          encounterImg = ImageTk.PhotoImage(encounter)
+          my_encounter = Label(top, image = encounterImg)
+          my_encounter.image = encounterImg
+          my_encounter.pack()
+          my_encounter.place(x = (0), y = (40 * (i + 1)))
+          keyLabel = Label(top,text = key[i])
+          keyLabel.config(font=(Game.font,10))
+          keyLabel.place(x = (40), y = (8) + (40 * (i + 1)))
+      closeButton = Button(top, text="Close", command =top.destroy)
+      closeButton.place(x = 0 , y = 280)
+      closeButton.config(font=(Game.font, 10))
+      
+      
   def showkey(self,row):
       keyimages = ["weak.jpg","miniboss.jpg","bonfire.jpg","random.png","boss.jpg"]
       key = ["Weak Encounter","MiniBoss Encounter","Rest Encounter","Random Encounter","Boss Encounter"]
@@ -814,11 +836,10 @@ class Game(Frame):
           my_encounter = Label(self, image = encounterImg)
           my_encounter.image = encounterImg
           my_encounter.pack()
-          my_encounter.place(x = (50), y = row + (40 * (i + 1)))
+          my_encounter.place(x = (5), y = row + (40 * (i + 1)))
           keyLabel = Label(self,text = key[i])
           keyLabel.config(font=(Game.font,10))
-          keyLabel.place(x = (100), y = (row + 5) + (40 * (i + 1)))
-          
+          keyLabel.place(x = (55), y = (row + 5) + (40 * (i + 1)))
 
 
 
@@ -826,10 +847,10 @@ class Game(Frame):
   def selectmap(self):
     # Set variables for the columns and rows for organization
     column = 280
-    row1 = 50
-    row2 = 170
-    row3 = 290
-    row4 = 410
+    row1 = 40
+    row2 = 140
+    row3 = 250
+    row4 = 370
     
     # Clears the screen
     self.clearscreen()
@@ -857,7 +878,11 @@ class Game(Frame):
     testmapButton.config(font=(Game.font, 10))
     testmapButton['command'] = lambda mapid = self.testmap: self.createPlayer(mapid)
     #Key
-    self.showkey(350)
+    mapkeyButton = Button(self, text="Map Key")
+    mapkeyButton.place(x = 5 , y = 350)
+    mapkeyButton.config(font=(Game.font, 10))
+    mapkeyButton['command'] = lambda : self.showkeypopup()
+    
     
     # Makes a back button that takes you back to the start screen
     backButton = Button(self, text = "Back", command = self.startscreen)
@@ -878,13 +903,13 @@ class Game(Frame):
     name = StringVar()
     playername = Entry(self, textvariable = name)
     playername.pack()
-    playername.place(x = 250, y = 300)
+    playername.place(x = 250, y = 170)
     playername.config(font=(Game.font,Game.buttonsizelarge))
     name.set("Player")
  
     # This will start your adventure
     startadvButton = Button(self, text = "Start Adventure", command =lambda: self.postcreatePlayer(name.get()))
-    startadvButton.place(x = 270, y = 400)
+    startadvButton.place(x = 270, y = 250)
     startadvButton.config(font=(Game.font,Game.buttonsizelarge))
 
 
@@ -897,14 +922,13 @@ class Game(Frame):
     self.clearscreen()
     self.mainbackground()
     # Outputs a message to the player
-    tipmessage = Text(self, height=10, width=40)
-    tipmessage.pack()
-    tipmessage.insert(tk.END, "Travers the dungeon on a quest for the \nAdventurers' Guild and defeat the bosseson your way to the center of the ruins. \nUse your skills to beat enemies and \nacquire new skills to beat harder \nmonsters. Also be careful you don't \nget lost on your way down.")
-    tipmessage.place(x = 50,y = 10)
+    tipmessage = Label(self,text = "Travers the dungeon on a quest for the \nAdventurers' Guild and defeat the bosses \non your way to the center of the ruins. \nUse your skills to beat enemies and \nacquire new skills to beat harder \nmonsters. Also be careful you don't \nget lost on your way down.")
+    tipmessage.place(x = 80,y = 10)
     tipmessage.config(font = (Game.font,Game.buttonsizelarge))
-
+    
+    
     continuebutton = Button(self, text = "Continue", command = lambda: self.tipsscreen2(op))
-    continuebutton.place(x = 300, y = 510)
+    continuebutton.place(x = 300, y = 340)
     continuebutton.config(font=(Game.font,Game.buttonsizelarge))
     
 
@@ -913,9 +937,7 @@ class Game(Frame):
   def tipsscreen2(self,op):
     
     PLAYER_INFO_X = 10
-    PLAYER_INFO_Y = 300
-    MONSTER_INFO_X = 510
-    MONSTER_INFO_Y =200
+    PLAYER_INFO_Y = 200
     SPACING = 40
     self.clearscreen()
     self.mainbackground()
@@ -950,7 +972,7 @@ class Game(Frame):
     playerhealthtip = Label(self,text = "<- Player's Health")
     playerhealthtip.place(x=(PLAYER_INFO_X + 150),y= (PLAYER_INFO_Y)-(3*SPACING))
     playerhealthtip.config(font = (Game.font,Game.buttonsizelarge))
-    playerguard = Label(self,text = "<- Guard is reduces the damage you take")
+    playerguard = Label(self,text = "<- Guard reduces the damage you take")
     playerguard.place(x=PLAYER_INFO_X+150,y= (PLAYER_INFO_Y)-(2*SPACING))
     playerguard.config(font = (Game.font,Game.buttonsizelarge))
     playerenergy = Label(self,text = "<- Energy is used to attack.")
@@ -961,7 +983,7 @@ class Game(Frame):
     playerenergy2.config(font = (Game.font,Game.buttonsizelarge))
 
     continuebutton = Button(self, text = "Continue", command = lambda: self.tipsscreen3(op))
-    continuebutton.place(x = 300, y = 510)
+    continuebutton.place(x = 300, y = 360)
     continuebutton.config(font=(Game.font,Game.buttonsizelarge))
     
 
@@ -974,25 +996,24 @@ class Game(Frame):
     testhand = [Lightning(),FireBall(),KnifeThrow(),HealthPotion(),VineWhip()]
     for i in range(0,len(testhand)):
       card = Image.open(testhand[i].image)
-      card = card.resize((120,80), Image.ANTIALIAS)
+      card = card.resize((100,60), Image.ANTIALIAS)
       cardImg =  ImageTk.PhotoImage(card)
       my_card = Button(self,image=cardImg)
       my_card.image = cardImg
       my_card.pack()
-      my_card.place(x = (130*(i+1))-50, y = 400)
+      my_card.place(x = (130*(i+1))-50, y = 270)
       cardtip = Pmw.Balloon(self)
       cardtip.bind(my_card,testhand[i].balloontip)
 
     
     # Outputs a message to the player
-    tipmessage = Text(self, height=10, width=40)
-    tipmessage.pack()
-    tipmessage.insert(tk.END, "This is your hand. Every turn you will \ndraw new cards from your deck until it \nis empty. It will then shuffle your \ncards back into your deck from the \ndiscard pile. You use a card by clickingit. You can also see more info about \nthe card by hovering over it.")
-    tipmessage.place(x = 80,y = 10)
+    tipmessage = Label(self,text = "This is your hand. Every turn you will \ndraw new cards from your deck until it \nis empty. It will then shuffle your \ncards back into your deck from the \ndiscard pile. You use a card by clicking it. \nYou can also see more info about \nthe card by hovering over it.")
+    tipmessage.place(x = 40,y = 10)
     tipmessage.config(font = (Game.font,Game.buttonsizelarge))
     
+    
     continuebutton = Button(self, text = "Continue", command = lambda: self.processmap(op))
-    continuebutton.place(x = 300, y = 510)
+    continuebutton.place(x = 300, y = 360)
     continuebutton.config(font=(Game.font,Game.buttonsizelarge))
 
   # Function that processes the given map
@@ -1026,7 +1047,7 @@ class Game(Frame):
   def restencounter(self,player):
     # Sets the background
     background = Image.open("bonfire.jpg")
-    background = background.resize((420,600), Image.ANTIALIAS)
+    background = background.resize((350,460), Image.ANTIALIAS)
     backgroundImg =  ImageTk.PhotoImage(background)
     my_background = Label(self,image=backgroundImg)
     my_background.image = backgroundImg
@@ -1034,17 +1055,16 @@ class Game(Frame):
     my_background.place(x = 0, y = 0)
 
     # Outputs a message to the player
-    firepitmessage = Text(self, height=10, width=22)
-    firepitmessage.pack()
-    firepitmessage.insert(tk.END, "You come upon a \nburning fire pit. \nYou feel at peace and safe near the fire.\nWeirdly there are \nprovisions of food \nand water for you \naround the fire.")
-    firepitmessage.place(x = 425,y = 0)
-    firepitmessage.config(font = (Game.font,Game.buttonsizelarge))
+    chestmessage = Label(self,text = "You come upon a \nburning fire pit. \nYou feel at peace and \nsafe near the fire.\nWeirdly there are \nprovisions of food \nand water for you \naround the fire.")
+    chestmessage.place(x = 390,y = 0)
+    chestmessage.config(font = (Game.font,Game.buttonsizelarge))
+
 
     # Makes a walk away button 
     restButton = Button(self,text = "Rest", command = lambda: self.postencounter(player))
     restButton.pack()
     restButton.config(font = (Game.font,Game.buttonsizelarge))
-    restButton.place(x = 425, y = 350)
+    restButton.place(x = 510, y = 300)
     
     # Heals the player
     player.heal(20)
@@ -1056,7 +1076,7 @@ class Game(Frame):
     self.clearscreen()
     # Sets the background
     background = Image.open("chest.jpg")
-    background = background.resize((420,600), Image.ANTIALIAS)
+    background = background.resize((350,600), Image.ANTIALIAS)
     backgroundImg =  ImageTk.PhotoImage(background)
     my_background = Label(self,image=backgroundImg)
     my_background.image = backgroundImg
@@ -1064,23 +1084,21 @@ class Game(Frame):
     my_background.place(x = 0, y = 0)
 
     # Outputs a message to the player
-    chestmessage = Text(self, height=5, width=22)
-    chestmessage.pack()
-    chestmessage.insert(tk.END, "A chest apears in \nfront of you.\nA warning is written \non the lid.\nOpen at your own risk.")
-    chestmessage.place(x = 425,y = 0)
+    chestmessage = Label(self,text = "A chest apears in \nfront of you.\nA warning is written \non the lid.\nOpen at your own risk.")
+    chestmessage.place(x = 390,y = 0)
     chestmessage.config(font = (Game.font,Game.buttonsizelarge))
 
     # Makes a open chest button with the odds of the player succeding
     openButton = Button(self,text = "Open the chest. \n70% chance of success", command = lambda: self.openweakchest(player))
     openButton.pack()
     openButton.config(font = (Game.font,Game.buttonsizelarge))
-    openButton.place(x = 425, y = 350)
+    openButton.place(x = 390, y = 250)
 
     # Makes a walk away button 
     walkawayButton = Button(self,text = "Walk Away", command = lambda: self.postencounter(player))
     walkawayButton.pack()
     walkawayButton.config(font = (Game.font,Game.buttonsizelarge))
-    walkawayButton.place(x = 515, y = 440)
+    walkawayButton.place(x = 480, y = 330)
     
   # Function if the player decides to open the chest
   def openweakchest(self,player):
@@ -1172,13 +1190,13 @@ class Game(Frame):
       my_card['command'] = lambda idx =i: self.cardpress(idx,player,monster)
       my_card.image = cardImg
       my_card.pack()
-      my_card.place(x = (90*(i+1)), y = 400)
+      my_card.place(x = (90*(i+1)), y = 310)
       cardtip = Pmw.Balloon(self)
       cardtip.bind(my_card,player.hand[i].balloontip)
 
     # End turn button that will end the player's turn
     endturnbutton = Button(self, text = "End Turn", command = lambda: self.endturn(player,monster))
-    endturnbutton.place(x = 210, y = 510)
+    endturnbutton.place(x = 310, y = 370)
     endturnbutton.config(font=(Game.font,Game.buttonsizelarge))
 
     # Outputs the monster's attack on the player
@@ -1186,7 +1204,7 @@ class Game(Frame):
       # Print card used
       attackmessage = Label(self,text = "{} \nused \n{}".format(monster.name,self.monsterattack.name))
       attackmessage.pack()
-      attackmessage.place(x = 650,y = 200)
+      attackmessage.place(x = 600,y = 160)
       attackmessage.config(font = (Game.font,Game.buttonsizelarge))
 
     # Once the moster dies the player is taken to the loot screen
@@ -1226,13 +1244,9 @@ class Game(Frame):
     
   def battlefield(self, op, creature):
     PLAYER_X = 150
-    PLAYER_Y = 200
-    PLAYER_INFO_X = 150
-    PLAYER_INFO_Y = 200
+    PLAYER_Y = 160
     MONSTER_X = 510
-    MONSTER_Y = 200
-    MONSTER_INFO_X = 510
-    MONSTER_INFO_Y =200
+    MONSTER_Y = 160
     SPACING = 25
     
     
@@ -1254,19 +1268,19 @@ class Game(Frame):
     my_player.place(x = PLAYER_X, y = PLAYER_Y)
     # Shows player's name
     playername = Label(self,text = "{}".format(op.name))
-    playername.place(x=PLAYER_INFO_X,y= (PLAYER_INFO_Y)-(4*SPACING))
+    playername.place(x=PLAYER_X,y= (PLAYER_Y)-(4*SPACING))
     playername.config(font = (Game.font,Game.buttonsizemedium))
     # Shows the player's health
     playerhealth = Label(self,text = "HP {}/{}".format(op.health,op.maxhealth))
-    playerhealth.place(x=PLAYER_INFO_X,y= (PLAYER_INFO_Y)-(3*SPACING))
+    playerhealth.place(x=PLAYER_X,y= (PLAYER_Y)-(3*SPACING))
     playerhealth.config(font = (Game.font,Game.buttonsizemedium))
     # Shows the player's guard
     playerguard = Label(self,text = "{} Guard".format(op.guard))
-    playerguard.place(x=PLAYER_INFO_X,y= (PLAYER_INFO_Y)-(2*SPACING))
+    playerguard.place(x=PLAYER_X,y= (PLAYER_Y)-(2*SPACING))
     playerguard.config(font = (Game.font,Game.buttonsizemedium))
     # Shows the player's guard
     playerenergy = Label(self,text = "{}/{} Energy".format(op.energy,op.maxenergy))
-    playerenergy.place(x=PLAYER_INFO_X,y= (PLAYER_INFO_Y)-(1*SPACING))
+    playerenergy.place(x=PLAYER_X,y= (PLAYER_Y)-(1*SPACING))
     playerenergy.config(font = (Game.font,Game.buttonsizemedium))
           
     # Shows the monster's image
@@ -1277,17 +1291,17 @@ class Game(Frame):
     my_monster.image = monsterImg
     my_monster.pack()
     my_monster.place(x = MONSTER_X, y = MONSTER_Y)
-    # Shows player's name
-    playername = Label(self,text = "{}".format(creature.name))
-    playername.place(x=MONSTER_INFO_X,y= (MONSTER_INFO_Y)-(3*SPACING))
-    playername.config(font = (Game.font,Game.buttonsizemedium))
+    # Shows monster's name
+    monstername = Label(self,text = "{}".format(creature.name))
+    monstername.place(x=MONSTER_X,y= (MONSTER_Y)-(3*SPACING))
+    monstername.config(font = (Game.font,Game.buttonsizemedium))
     # Shows the monster's health
     monsterhealth = Label(self,text = "HP {}/{}".format(creature.health,creature.maxhealth))
-    monsterhealth.place(x= MONSTER_INFO_X,y= (MONSTER_INFO_Y)-(2*SPACING))
+    monsterhealth.place(x= MONSTER_X,y= (MONSTER_Y)-(2*SPACING))
     monsterhealth.config(font = (Game.font,Game.buttonsizemedium))
     # SHows the monster's guard
     monsterguard = Label(self,text = "{} Guard".format(creature.guard))
-    monsterguard.place(x=MONSTER_INFO_X,y= (MONSTER_INFO_Y)-(1*SPACING))
+    monsterguard.place(x=MONSTER_X,y= (MONSTER_Y)-(1*SPACING))
     monsterguard.config(font = (Game.font,Game.buttonsizemedium))
 
 
@@ -1389,18 +1403,18 @@ class Game(Frame):
     # Presents the cards to the player to take 1
     for i in range(0,len(lootcards)):
       card = Image.open(lootcards[i].image)
-      card = card.resize((160,200), Image.ANTIALIAS)
+      card = card.resize((140,160), Image.ANTIALIAS)
       cardImg =  ImageTk.PhotoImage(card)
       my_card = Button(self,image=cardImg)
       my_card['command'] = lambda idx =i: self.postloot(player,lootcards[idx])
       my_card.image = cardImg
       my_card.pack()
-      my_card.place(x = (200*(i+1)-75), y = 100)
+      my_card.place(x = (200*(i+1)-75), y = 90)
       cardtip = Pmw.Balloon(self)
       cardtip.bind(my_card,lootcards[i].balloontip)
     rewardmessage = Label(self,text = "Select a Reward Card to Progress")
     rewardmessage.pack()
-    rewardmessage.place(x = 150,y = 400)
+    rewardmessage.place(x = 150,y = 350)
     rewardmessage.config(font = (Game.font,Game.buttonsizelarge))
     
     
@@ -1420,6 +1434,15 @@ class Game(Frame):
     # If player is dead then go to death screen
     if player.health < 1:
       self.deathscreen()
+    # Shows player's name
+    playername = Label(self,text = "{}".format(player.name))
+    playername.place(x=320,y= 3)
+    playername.config(font = (Game.font,Game.buttonsizemedium))
+    # Shows the player's health
+    playerhealth = Label(self,text = "HP {}/{}".format(player.health,player.maxhealth))
+    playerhealth.place(x=450,y= 3)
+    playerhealth.config(font = (Game.font,Game.buttonsizemedium))
+    
     # Show the map
     for i in range(0, len(self.selectedmap)):
       encounter = Image.open(self.selectedmap[i])
@@ -1428,7 +1451,7 @@ class Game(Frame):
       my_encounter = Label(self, image = encounterImg)
       my_encounter.image = encounterImg
       my_encounter.pack()
-      my_encounter.place(x =(61 * (i)), y = 150)
+      my_encounter.place(x =(61 * (i)), y = 100)
     # SHows the players position
     for i in range(0,self.mapposition):
       position = Image.open("X.jpg")
@@ -1437,12 +1460,12 @@ class Game(Frame):
       my_position = Label(self, image = positionImg)
       my_position.image = positionImg
       my_position.pack()
-      my_position.place(x =(61 * (i)), y = 150)
-    self.showkey(350)
-    # Let the player look at deck
+      my_position.place(x =(61 * (i)), y = 100)
+    self.showkey(170)
+    
     # Button to continue onto the next encounter
     continueButton = Button(self, text = "Continue", command = lambda: self.processmap(player))
-    continueButton.place(x = 325, y = 500)
+    continueButton.place(x = 325, y = 300)
     continueButton.config(font=(Game.font,Game.buttonsizelarge))
 
   # Death screen function
@@ -1451,11 +1474,11 @@ class Game(Frame):
     # Tell the player that they died 
     deathmessage = Label(self,text = "YOU DIED!! GET BETTER!!")
     deathmessage.pack()
-    deathmessage.place(x = 650,y = 600)
+    deathmessage.place(x = 100,y = 225)
     deathmessage.config(font = (Game.font,Game.buttonsizelarge))
     # Restart button
     continueButton = Button(self, text = "Restart", command = lambda: self.play())
-    continueButton.place(x = 325, y = 500)
+    continueButton.place(x = 270, y = 360)
     continueButton.config(font=(Game.font,Game.buttonsizelarge))
     
 
@@ -1467,7 +1490,7 @@ class Game(Frame):
 
 ###############################################################################
 WIDTH = 800
-HEIGHT = 600
+HEIGHT = 550
 
 window = Tk()
 window.title("Adventure Guild")
