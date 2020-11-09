@@ -154,7 +154,7 @@ class SwordFury(Card):
 class PoisonArrow(Card):
   def __init__(self):
     self.name = "Poison Arrow"
-    self.image = "poisonarrow.jpg"
+    self.image = "poisonarrow.png"
     self.damage = 5
     self.guard = 0
     self.debuff = ["Poison"]
