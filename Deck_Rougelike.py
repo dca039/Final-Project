@@ -772,6 +772,8 @@ class Game(Frame):
     self.clearscreen()
     # Sets background
     self.background("mainmenu.jpg")
+    # Sets map position to 0
+    self.mapposition = 0
     #Make the Title Label
     start = Label(self, text = "Adventures' Guild")
     start.pack()
@@ -1292,7 +1294,7 @@ class Game(Frame):
       # Print card used
       attackmessage = Label(self,text = "{} \nused \n{}".format(monster.name,self.monsterattack.name))
       attackmessage.pack()
-      attackmessage.place(x = 600,y = 160)
+      attackmessage.place(x = 580,y = 160)
       attackmessage.config(font = (Game.font,Game.buttonsizelarge))
 
     # Once the moster dies the player is taken to the loot screen
