@@ -63,8 +63,8 @@ class Adrenaline(Card):
     self.buff = ["Resistance"]
     self.stacks = 3
     self.energyuse = 0
-    self.balloontip = "{}\nBuff = {}\nEnergy = {}\nA rush of adrenaline gives you \nmore guard the more you use energy."\
-        .format(self.name, self.buff[0], self.energyuse)
+    self.balloontip = "{}\nDamage = {}\nBuff = {}\nEnergy = {}\nA rush of adrenaline gives you \nmore guard the more you use energy."\
+        .format(self.name, self.damage, self.buff[0], self.energyuse)
 
   
 
@@ -583,7 +583,7 @@ class Player(Creature):
         # Sets the player's name
         self.name = name
         # Sets the player's image
-        self.image = "Hunter.jpg"
+        self.image = "adventurer.jpg"
         # Sets the player's max health
         self.maxhealth = 50
         # Sets the player's health
@@ -994,7 +994,7 @@ class Game(Frame):
     my_player.pack()
     my_player.place(x = PLAYER_INFO_X, y = PLAYER_INFO_Y)
     # Shows player's name
-    playername = Label(self,text = "{}".format(op.name))
+    playername = Label(self,text = "Player".format(op.name))
     playername.place(x=PLAYER_INFO_X,y= (PLAYER_INFO_Y)-(4*SPACING))
     playername.config(font = (Game.font,Game.buttonsizelarge))
     # Shows the player's health
@@ -1566,6 +1566,7 @@ class Game(Frame):
   def play(self):
     # make the start screen
     self.init_gamewindow()
+
 
 
 ###############################################################################
