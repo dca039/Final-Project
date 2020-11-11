@@ -497,7 +497,7 @@ class Creature():
       if self.status.count("Resistance") > 0:
         self.resistance()
       if self.status.count("Heal") > 0:
-        self.heal()
+        self.heal(5)
       else:
          pass
 
@@ -664,7 +664,7 @@ class Witch(Creature):
         self.health = 20
         self.guard = 0
         self.status = []
-        self.movelist = [FireBall(), Lightning(), HealthPotion()]
+        self.movelist = [FireBall(), Lightning(),HealthPotion()]
         self.energy = 999
 
 class WildBoar(Creature):
@@ -695,6 +695,7 @@ class DarkKnight(Creature):
         self.image = "darkknight.jpg"
         self.maxhealth = 45
         self.health = 45
+        self.guard = 0
         self.status = []
         self.movelist = [Guard(), MasterSwordsmen(), BodySlam(), SwordFury()]
         self.energy = 999
