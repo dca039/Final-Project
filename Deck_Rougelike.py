@@ -744,7 +744,7 @@ class Game(Frame):
   def init_gamewindow(self):
     
     # changing the title of our master widget      
-    self.master.title("GUI")
+    self.master.title("Adventurers' Guild")
 
     # allowing the widget to take the full space of the window
     self.pack(fill=BOTH, expand=1)
