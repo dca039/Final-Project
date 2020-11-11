@@ -62,7 +62,7 @@ class Adrenaline(Card):
     self.debuff = []
     self.buff = ["Resistance"]
     self.stacks = 3
-    self.energyuse = 0
+    self.energyuse = 1
     self.balloontip = "{}\nDamage = {}\nBuff = {}\nEnergy = {}\nA rush of adrenaline gives you \nmore guard the more you use energy."\
         .format(self.name, self.damage, self.buff[0], self.energyuse)
 
