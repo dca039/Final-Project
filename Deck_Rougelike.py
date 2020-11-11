@@ -1214,7 +1214,7 @@ class Game(Frame):
 
   # Fetches a weak monster from a list
   def getweak(self):
-    weakmonsters = [Wolf(),Zombie()]
+    weakmonsters = [Wolf(), Zombie(), Slime()]
     randomcreature = weakmonsters[randint(0,len(weakmonsters)-1)]
     return randomcreature
 
@@ -1229,7 +1229,7 @@ class Game(Frame):
 
   # Fetches a miniboss monster from a list
   def getminiboss(self):
-    minibossmonsters = [Orc()]
+    minibossmonsters = [Witch(), WildBoar(), GiantScoripion()]
     randomcreature = minibossmonsters[randint(0,len(minibossmonsters)-1)]
     return randomcreature
 
@@ -1244,7 +1244,7 @@ class Game(Frame):
 
   # Fetches a boss monster from a list
   def getboss(self):
-    bossmonsters = [Slime()]
+    bossmonsters = [DarkKnight(), Orc()]
     randomcreature = bossmonsters[randint(0,len(bossmonsters)-1)]
     return randomcreature
 
